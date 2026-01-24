@@ -1,1 +1,328 @@
-https://github.com/rheston/protein-bar-selector/upload/main
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vegan Protein Bar Selector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .preferences-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .preferences-card h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .slider-group {
+            margin-bottom: 25px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .slider-value {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.1rem;
+            min-width: 30px;
+            text-align: right;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #764ba2;
+            transform: scale(1.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            background: #764ba2;
+            transform: scale(1.2);
+        }
+
+        .results-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .results-card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .bar-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .bar-rank {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .bar-info {
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .bar-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .bar-sweetener {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .bar-score {
+            font-size: 0.9rem;
+            color: #888;
+            font-weight: 500;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .preferences-card, .results-card {
+                padding: 20px;
+            }
+
+            .bar-item {
+                flex-wrap: wrap;
+            }
+
+            .bar-score {
+                width: 100%;
+                text-align: left;
+                margin-left: 55px;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Vegan Protein Bar Selector</h1>
+        <p class="subtitle">Rate how much you care about each criterion (0-10)</p>
+
+        <div class="preferences-card">
+            <h2>Your Preferences</h2>
+
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>Price per 100 Calories <small>(lower is better)</small></span>
+                    <span class="slider-value" id="value-price-cal">3</span>
+                </div>
+                <input type="range" min="0" max="10" value="3" id="slider-price-cal">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>% Protein Calories <small>(higher is better)</small></span>
+                    <span class="slider-value" id="value-protein">10</span>
+                </div>
+                <input type="range" min="0" max="10" value="10" id="slider-protein">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>Price per Gram of Protein <small>(lower is better)</small></span>
+                    <span class="slider-value" id="value-price-protein">0</span>
+                </div>
+                <input type="range" min="0" max="10" value="0" id="slider-price-protein">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>% Sugar Calories <small>(lower is better)</small></span>
+                    <span class="slider-value" id="value-sugar">5</span>
+                </div>
+                <input type="range" min="0" max="10" value="5" id="slider-sugar">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-label">
+                    <span>% Carbs Calories <small>(lower is better)</small></span>
+                    <span class="slider-value" id="value-carbs">7</span>
+                </div>
+                <input type="range" min="0" max="10" value="7" id="slider-carbs">
+            </div>
+        </div>
+
+        <div class="results-card">
+            <h2>Top 10 Bars for You</h2>
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        const barsData = [{"name":"Pegan Thin","ranks":{"price_per_100cal":85,"protein_cals":1,"price_per_protein":80,"sugar_cals":10,"carbs_cals":2},"sweetener":"Monk Fruit"},{"name":"No Cow","ranks":{"price_per_100cal":77,"protein_cals":2,"price_per_protein":87,"sugar_cals":6,"carbs_cals":8},"sweetener":"Erythritol"},{"name":"Raw Rev Glo","ranks":{"price_per_100cal":46,"protein_cals":10,"price_per_protein":85,"sugar_cals":23,"carbs_cals":5},"sweetener":"Cane Sugar"},{"name":"Free Soul","ranks":{"price_per_100cal":68,"protein_cals":4,"price_per_protein":85,"sugar_cals":1,"carbs_cals":35},"sweetener":"Maltitol"},{"name":"Misfits","ranks":{"price_per_100cal":70,"protein_cals":11,"price_per_protein":64,"sugar_cals":10,"carbs_cals":18},"sweetener":"Glycerin"},{"name":"2FIT","ranks":{"price_per_100cal":43,"protein_cals":23,"price_per_protein":67,"sugar_cals":10,"carbs_cals":18},"sweetener":"Tapioca Syrup"},{"name":"Daryl's Vegan Line","ranks":{"price_per_100cal":40,"protein_cals":7,"price_per_protein":91,"sugar_cals":40,"carbs_cals":22},"sweetener":"Sugar"},{"name":"IQBAR","ranks":{"price_per_100cal":53,"protein_cals":25,"price_per_protein":61,"sugar_cals":23,"carbs_cals":5},"sweetener":"Stevia"},{"name":"Barebells Plant Based","ranks":{"price_per_100cal":51,"protein_cals":13,"price_per_protein":66,"sugar_cals":5,"carbs_cals":40},"sweetener":"Maltitol"},{"name":"NuGo Slim","ranks":{"price_per_100cal":59,"protein_cals":3,"price_per_protein":95,"sugar_cals":30,"carbs_cals":34},"sweetener":"Cane Sugar"},{"name":"SimplyProtein Snack","ranks":{"price_per_100cal":42,"protein_cals":12,"price_per_protein":77,"sugar_cals":26,"carbs_cals":36},"sweetener":"Glycerin"},{"name":"Pulsin Keto (UK)","ranks":{"price_per_100cal":37,"protein_cals":50,"price_per_protein":47,"sugar_cals":16,"carbs_cals":999},"sweetener":"Xylitol"},{"name":"PhD Nutrition Smart Bar Plant (UK)","ranks":{"price_per_100cal":74,"protein_cals":8,"price_per_protein":69,"sugar_cals":2,"carbs_cals":55},"sweetener":"Xylitol"},{"name":"Garden of Life Organic Fit Protein","ranks":{"price_per_100cal":73,"protein_cals":19,"price_per_protein":55,"sugar_cals":6,"carbs_cals":39},"sweetener":"Glycerin"},{"name":"Lenny and Larry's Keto Cookie","ranks":{"price_per_100cal":20,"protein_cals":64,"price_per_protein":50,"sugar_cals":6,"carbs_cals":4},"sweetener":"Erythritol"},{"name":"Pulsin Protein (UK)","ranks":{"price_per_100cal":31,"protein_cals":42,"price_per_protein":60,"sugar_cals":35,"carbs_cals":15},"sweetener":"Xylitol"},{"name":"Trek Power (UK)","ranks":{"price_per_100cal":23,"protein_cals":22,"price_per_protein":83,"sugar_cals":69,"carbs_cals":24},"sweetener":"Dates"},{"name":"CanDo Keto Crisp (some flavors)","ranks":{"price_per_100cal":87,"protein_cals":36,"price_per_protein":29,"sugar_cals":19,"carbs_cals":26},"sweetener":"Erythritol"},{"name":"NuSkool Krunch Bar","ranks":{"price_per_100cal":92,"protein_cals":34,"price_per_protein":25,"sugar_cals":25,"carbs_cals":23},"sweetener":"Allulose"},{"name":"Garden of Life SPORT Organic","ranks":{"price_per_100cal":48,"protein_cals":13,"price_per_protein":68,"sugar_cals":33,"carbs_cals":68},"sweetener":"Tapioca Syrup"},{"name":"AMRITA","ranks":{"price_per_100cal":19,"protein_cals":29,"price_per_protein":78,"sugar_cals":50,"carbs_cals":46},"sweetener":"Unknown"},{"name":"Ridiculous (UK)","ranks":{"price_per_100cal":24,"protein_cals":74,"price_per_protein":32,"sugar_cals":13,"carbs_cals":7},"sweetener":"Xylitol"},{"name":"Aloha","ranks":{"price_per_100cal":57,"protein_cals":32,"price_per_protein":53,"sugar_cals":32,"carbs_cals":41},"sweetener":"Cane Sugar"},{"name":"Love Good Fats Chewy Nutty (some flavors)","ranks":{"price_per_100cal":54,"protein_cals":60,"price_per_protein":36,"sugar_cals":19,"carbs_cals":13},"sweetener":"Sugar"},{"name":"Vega Sport Protein","ranks":{"price_per_100cal":14,"protein_cals":25,"price_per_protein":91,"sugar_cals":61,"carbs_cals":52},"sweetener":"Unknown"},{"name":"good! (some flavors)","ranks":{"price_per_100cal":36,"protein_cals":13,"price_per_protein":79,"sugar_cals":64,"carbs_cals":59},"sweetener":"Tapioca Syrup"},{"name":"Lenny and Larry's The Complete Cookie-fied Bar","ranks":{"price_per_100cal":44,"protein_cals":18,"price_per_protein":70,"sugar_cals":48,"carbs_cals":60},"sweetener":"Molasses"},{"name":"Vega 20g","ranks":{"price_per_100cal":17,"protein_cals":20,"price_per_protein":90,"sugar_cals":75,"carbs_cals":51},"sweetener":"Unknown"},{"name":"Dr Smood Smart","ranks":{"price_per_100cal":91,"protein_cals":55,"price_per_protein":18,"sugar_cals":17,"carbs_cals":12},"sweetener":"Monk Fruit"},{"name":"PureFit Nutrition","ranks":{"price_per_100cal":79,"protein_cals":5,"price_per_protein":73,"sugar_cals":56,"carbs_cals":65},"sweetener":"Sugar"},{"name":"BHU Keto","ranks":{"price_per_100cal":52,"protein_cals":84,"price_per_protein":16,"sugar_cals":3,"carbs_cals":3},"sweetener":"Monk Fruit"},{"name":"Orgain Protein Snack Bar","ranks":{"price_per_100cal":80,"protein_cals":13,"price_per_protein":51,"sugar_cals":33,"carbs_cals":72},"sweetener":"Cane Sugar"},{"name":"SimplyProtein Cookie","ranks":{"price_per_100cal":96,"protein_cals":47,"price_per_protein":9,"sugar_cals":27,"carbs_cals":25},"sweetener":"Sugar"},{"name":"Clif Builders","ranks":{"price_per_100cal":7,"protein_cals":13,"price_per_protein":96,"sugar_cals":83,"carbs_cals":72},"sweetener":"Cane Syrup"},{"name":"Dang","ranks":{"price_per_100cal":71,"protein_cals":66,"price_per_protein":23,"sugar_cals":27,"carbs_cals":11},"sweetener":"Stevia"},{"name":"TRUBAR","ranks":{"price_per_100cal":89,"protein_cals":28,"price_per_protein":33,"sugar_cals":49,"carbs_cals":42},"sweetener":"Cane Sugar"},{"name":"Zing Keto","ranks":{"price_per_100cal":90,"protein_cals":68,"price_per_protein":11,"sugar_cals":6,"carbs_cals":16},"sweetener":"Tapioca Syrup"},{"name":"Outright Plant-Based","ranks":{"price_per_100cal":14,"protein_cals":40,"price_per_protein":75,"sugar_cals":70,"carbs_cals":43},"sweetener":"Unknown"},{"name":"Love Good Fats Truffle (some flavors)","ranks":{"price_per_100cal":54,"protein_cals":75,"price_per_protein":22,"sugar_cals":19,"carbs_cals":13},"sweetener":"Cane Sugar"},{"name":"R.E.D.D.","ranks":{"price_per_100cal":63,"protein_cals":61,"price_per_protein":31,"sugar_cals":18,"carbs_cals":30},"sweetener":"Dates"},{"name":"Mindright Superfood","ranks":{"price_per_100cal":38,"protein_cals":47,"price_per_protein":49,"sugar_cals":47,"carbs_cals":44},"sweetener":"Unknown"},{"name":"Rise (some flavors)","ranks":{"price_per_100cal":18,"protein_cals":38,"price_per_protein":71,"sugar_cals":60,"carbs_cals":57},"sweetener":"Coconut Nectar"},{"name":"Good Cravings ","ranks":{"price_per_100cal":93,"protein_cals":9,"price_per_protein":45,"sugar_cals":86,"carbs_cals":50},"sweetener":"Dates"},{"name":"Plenny","ranks":{"price_per_100cal":34,"protein_cals":51,"price_per_protein":52,"sugar_cals":29,"carbs_cals":56},"sweetener":"Unknown"},{"name":"PROBAR Protein","ranks":{"price_per_100cal":35,"protein_cals":20,"price_per_protein":76,"sugar_cals":68,"carbs_cals":72},"sweetener":"Unknown"},{"name":"Munk Pack Nut & Seed","ranks":{"price_per_100cal":78,"protein_cals":79,"price_per_protein":13,"sugar_cals":14,"carbs_cals":8},"sweetener":"Unknown"},{"name":"Nänosupps Protein Brownie (UK, EU, etc)","ranks":{"price_per_100cal":25,"protein_cals":27,"price_per_protein":74,"sugar_cals":63,"carbs_cals":71},"sweetener":"Sugar"},{"name":"Square Organics","ranks":{"price_per_100cal":11,"protein_cals":41,"price_per_protein":84,"sugar_cals":73,"carbs_cals":49},"sweetener":"Unknown"},{"name":"Wild Protein Plant Based","ranks":{"price_per_100cal":60,"protein_cals":6,"price_per_protein":89,"sugar_cals":82,"carbs_cals":72},"sweetener":"Maltitol"},{"name":"keto keto (UK)","ranks":{"price_per_100cal":26,"protein_cals":92,"price_per_protein":10,"sugar_cals":4,"carbs_cals":21},"sweetener":"Unknown"},{"name":"YoFiit Vegan Protein Breakfast","ranks":{"price_per_100cal":83,"protein_cals":51,"price_per_protein":26,"sugar_cals":31,"carbs_cals":37},"sweetener":"Unknown"},{"name":"Huel","ranks":{"price_per_100cal":58,"protein_cals":30,"price_per_protein":54,"sugar_cals":53,"carbs_cals":63},"sweetener":"Unknown"},{"name":"Tribe Triple Decker (UK)","ranks":{"price_per_100cal":66,"protein_cals":65,"price_per_protein":28,"sugar_cals":46,"carbs_cals":20},"sweetener":"Unknown"},{"name":"IMWELL","ranks":{"price_per_100cal":32,"protein_cals":35,"price_per_protein":62,"sugar_cals":39,"carbs_cals":85},"sweetener":"Unknown"},{"name":"KIND Nut","ranks":{"price_per_100cal":9,"protein_cals":79,"price_per_protein":44,"sugar_cals":43,"carbs_cals":30},"sweetener":"Sugar"},{"name":"Munk Pack Keto Granola","ranks":{"price_per_100cal":84,"protein_cals":85,"price_per_protein":7,"sugar_cals":15,"carbs_cals":10},"sweetener":"Unknown"},{"name":"Yummo's Dough Dreamer! Soft-Baked Protein Cookies (UK)","ranks":{"price_per_100cal":64,"protein_cals":33,"price_per_protein":48,"sugar_cals":22,"carbs_cals":91},"sweetener":"Maltitol"},{"name":"think! Vegan High Protein","ranks":{"price_per_100cal":67,"protein_cals":23,"price_per_protein":58,"sugar_cals":41,"carbs_cals":89},"sweetener":"Maltitol"},{"name":"Zing Chocolate-Covered","ranks":{"price_per_100cal":61,"protein_cals":57,"price_per_protein":34,"sugar_cals":37,"carbs_cals":48},"sweetener":"Tapioca Syrup"},{"name":"NuGo Dark","ranks":{"price_per_100cal":16,"protein_cals":30,"price_per_protein":82,"sugar_cals":90,"carbs_cals":72},"sweetener":"Cane Sugar"},{"name":"Functional Mushrooms","ranks":{"price_per_100cal":86,"protein_cals":36,"price_per_protein":30,"sugar_cals":41,"carbs_cals":70},"sweetener":"Unknown"},{"name":"Munk Pack Protein Cookie","ranks":{"price_per_100cal":5,"protein_cals":51,"price_per_protein":93,"sugar_cals":70,"carbs_cals":67},"sweetener":"Unknown"},{"name":"nakd (UK)","ranks":{"price_per_100cal":21,"protein_cals":67,"price_per_protein":40,"sugar_cals":84,"carbs_cals":28},"sweetener":"Dates"},{"name":"Zing Nekkid","ranks":{"price_per_100cal":61,"protein_cals":57,"price_per_protein":34,"sugar_cals":44,"carbs_cals":54},"sweetener":"Tapioca Syrup"},{"name":"Mid-Day Squares","ranks":{"price_per_100cal":82,"protein_cals":76,"price_per_protein":15,"sugar_cals":36,"carbs_cals":29},"sweetener":"Unknown"},{"name":"The GFB","ranks":{"price_per_100cal":13,"protein_cals":55,"price_per_protein":63,"sugar_cals":66,"carbs_cals":72},"sweetener":"Unknown"},{"name":"Vega Protein Snack","ranks":{"price_per_100cal":50,"protein_cals":45,"price_per_protein":43,"sugar_cals":78,"carbs_cals":62},"sweetener":"Unknown"},{"name":"Cave Man","ranks":{"price_per_100cal":22,"protein_cals":86,"price_per_protein":21,"sugar_cals":58,"carbs_cals":30},"sweetener":"Unknown"},{"name":"Quantum Energy Square","ranks":{"price_per_100cal":47,"protein_cals":51,"price_per_protein":42,"sugar_cals":74,"carbs_cals":58},"sweetener":"Unknown"},{"name":"Fast Bar","ranks":{"price_per_100cal":81,"protein_cals":89,"price_per_protein":5,"sugar_cals":38,"carbs_cals":16},"sweetener":"Unknown"},{"name":"Trek Protein Flapjack (UK)","ranks":{"price_per_100cal":3,"protein_cals":72,"price_per_protein":81,"sugar_cals":65,"carbs_cals":61},"sweetener":"Sugar"},{"name":"Whole Earth & Sea Vegan Greens","ranks":{"price_per_100cal":33,"protein_cals":43,"price_per_protein":56,"sugar_cals":93,"carbs_cals":72},"sweetener":"Unknown"},{"name":"Grab the Gold","ranks":{"price_per_100cal":69,"protein_cals":39,"price_per_protein":41,"sugar_cals":85,"carbs_cals":69},"sweetener":"Unknown"},{"name":"Vive (UK)","ranks":{"price_per_100cal":41,"protein_cals":82,"price_per_protein":19,"sugar_cals":76,"carbs_cals":27},"sweetener":"Glucose Syrup"},{"name":"NuGo Protein Cookie","ranks":{"price_per_100cal":4,"protein_cals":68,"price_per_protein":72,"sugar_cals":77,"carbs_cals":63},"sweetener":"Cane Sugar"},{"name":"Tribe Protein Flapjack (UK)","ranks":{"price_per_100cal":65,"protein_cals":78,"price_per_protein":20,"sugar_cals":62,"carbs_cals":38},"sweetener":"Unknown"},{"name":"Trek Protein Energy (UK)","ranks":{"price_per_100cal":6,"protein_cals":49,"price_per_protein":94,"sugar_cals":96,"carbs_cals":84},"sweetener":"Raisins"},{"name":"NuGo Organic","ranks":{"price_per_100cal":27,"protein_cals":45,"price_per_protein":59,"sugar_cals":86,"carbs_cals":89},"sweetener":"Cane Sugar"},{"name":"NuGo Free","ranks":{"price_per_100cal":30,"protein_cals":44,"price_per_protein":57,"sugar_cals":79,"carbs_cals":95},"sweetener":"Cane Sugar"},{"name":"Clif Nut Butter","ranks":{"price_per_100cal":8,"protein_cals":81,"price_per_protein":38,"sugar_cals":52,"carbs_cals":72},"sweetener":"Brown Rice Syrup"},{"name":"Core Bar","ranks":{"price_per_100cal":76,"protein_cals":61,"price_per_protein":24,"sugar_cals":54,"carbs_cals":72},"sweetener":"Dates"},{"name":"Freakin' Wholesome Protein Balls","ranks":{"price_per_100cal":75,"protein_cals":88,"price_per_protein":8,"sugar_cals":57,"carbs_cals":33},"sweetener":"Unknown"},{"name":"Tribe Protein Energy (UK)","ranks":{"price_per_100cal":72,"protein_cals":77,"price_per_protein":17,"sugar_cals":55,"carbs_cals":53},"sweetener":"Unknown"},{"name":"Evolve","ranks":{"price_per_100cal":10,"protein_cals":61,"price_per_protein":65,"sugar_cals":88,"carbs_cals":83},"sweetener":"Unknown"},{"name":"RXBAR Plant","ranks":{"price_per_100cal":45,"protein_cals":57,"price_per_protein":39,"sugar_cals":94,"carbs_cals":72},"sweetener":"Dates"},{"name":"Lenny and Larry's The Complete Cookie","ranks":{"price_per_100cal":2,"protein_cals":71,"price_per_protein":88,"sugar_cals":81,"carbs_cals":86},"sweetener":"Cane Sugar"},{"name":"Luna","ranks":{"price_per_100cal":28,"protein_cals":68,"price_per_protein":37,"sugar_cals":70,"carbs_cals":91},"sweetener":"Brown Rice Syrup"},{"name":"Thunderbird","ranks":{"price_per_100cal":49,"protein_cals":87,"price_per_protein":12,"sugar_cals":88,"carbs_cals":45},"sweetener":"Dates"},{"name":"Pulsin High Fibre (UK)","ranks":{"price_per_100cal":12,"protein_cals":96,"price_per_protein":3,"sugar_cals":95,"carbs_cals":47},"sweetener":"Coconut Blossom Sugar"},{"name":"Larabar","ranks":{"price_per_100cal":1,"protein_cals":90,"price_per_protein":46,"sugar_cals":92,"carbs_cals":65},"sweetener":"Unknown"},{"name":"Go Macro","ranks":{"price_per_100cal":39,"protein_cals":73,"price_per_protein":27,"sugar_cals":67,"carbs_cals":94},"sweetener":"Unknown"},{"name":"Health Warrior Chia","ranks":{"price_per_100cal":88,"protein_cals":83,"price_per_protein":6,"sugar_cals":45,"carbs_cals":88},"sweetener":"Brown Rice Syrup"},{"name":"Belli Welli","ranks":{"price_per_100cal":95,"protein_cals":93,"price_per_protein":2,"sugar_cals":58,"carbs_cals":72},"sweetener":"Unknown"},{"name":"Whoa! Dough","ranks":{"price_per_100cal":29,"protein_cals":91,"price_per_protein":13,"sugar_cals":79,"carbs_cals":96},"sweetener":"Unknown"},{"name":"UCAN","ranks":{"price_per_100cal":94,"protein_cals":95,"price_per_protein":1,"sugar_cals":50,"carbs_cals":87},"sweetener":"Unknown"},{"name":"NuGo Fiber d'Lish","ranks":{"price_per_100cal":56,"protein_cals":94,"price_per_protein":4,"sugar_cals":91,"carbs_cals":93},"sweetener":"Fruit Juices"}];
+
+        const sliders = {
+            priceCal: document.getElementById('slider-price-cal'),
+            protein: document.getElementById('slider-protein'),
+            priceProtein: document.getElementById('slider-price-protein'),
+            sugar: document.getElementById('slider-sugar'),
+            carbs: document.getElementById('slider-carbs')
+        };
+
+        const values = {
+            priceCal: document.getElementById('value-price-cal'),
+            protein: document.getElementById('value-protein'),
+            priceProtein: document.getElementById('value-price-protein'),
+            sugar: document.getElementById('value-sugar'),
+            carbs: document.getElementById('value-carbs')
+        };
+
+        function updateSliderValue(slider, valueDisplay) {
+            valueDisplay.textContent = slider.value;
+        }
+
+        function calculateAndDisplay() {
+            const weights = {
+                priceCal: parseInt(sliders.priceCal.value),
+                protein: parseInt(sliders.protein.value),
+                priceProtein: parseInt(sliders.priceProtein.value),
+                sugar: parseInt(sliders.sugar.value),
+                carbs: parseInt(sliders.carbs.value)
+            };
+
+            // Calculate weighted scores
+            const scored = barsData.map(bar => {
+                const score =
+                    (bar.ranks.price_per_100cal * weights.priceCal) +
+                    (bar.ranks.protein_cals * weights.protein) +
+                    (bar.ranks.price_per_protein * weights.priceProtein) +
+                    (bar.ranks.sugar_cals * weights.sugar) +
+                    (bar.ranks.carbs_cals * weights.carbs);
+
+                return {
+                    ...bar,
+                    score: score
+                };
+            });
+
+            // Sort by score (lower is better)
+            scored.sort((a, b) => a.score - b.score);
+
+            // Display top 10
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = scored.slice(0, 10).map((bar, index) => `
+                <div class="bar-item">
+                    <div class="bar-rank">${index + 1}</div>
+                    <div class="bar-info">
+                        <div class="bar-name">${bar.name}</div>
+                        <div class="bar-sweetener">Sweetened with: ${bar.sweetener}</div>
+                    </div>
+                    <div class="bar-score">Score: ${bar.score}</div>
+                </div>
+            `).join('');
+        }
+
+        // Set up event listeners
+        Object.keys(sliders).forEach(key => {
+            sliders[key].addEventListener('input', () => {
+                updateSliderValue(sliders[key], values[key]);
+                calculateAndDisplay();
+            });
+        });
+
+        // Initial calculation
+        calculateAndDisplay();
+    </script>
+</body>
+</html>
