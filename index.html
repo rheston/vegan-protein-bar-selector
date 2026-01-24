@@ -415,6 +415,21 @@
             text-align: left;
             position: sticky;
             top: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .all-bars-table th:hover {
+            background: #3d6626;
+        }
+
+        .all-bars-table th.sorted {
+            background: #1a3a0f;
+        }
+
+        .sort-arrow {
+            margin-left: 5px;
+            font-size: 0.8em;
         }
 
         .all-bars-table td {
@@ -2433,6 +2448,12 @@
 
         const defaultBarsData = JSON.parse(JSON.stringify(barsData));
 
+        // Sort state for All Bars table
+        let sortState = {
+            column: 'name',
+            ascending: true
+        };
+
         // Clear old localStorage data that doesn't have the new structure
         const savedData = localStorage.getItem('barsData');
         if (savedData) {
@@ -2546,8 +2567,18 @@
             }
         }
 
-        function displayAllBars(scoredBars) {
+        function displayAllBars(scoredBars, sortColumn = null, sortAscending = null) {
             const allBarsDiv = document.getElementById('allBars');
+
+            // Update sort state if parameters provided
+            if (sortColumn !== null) {
+                if (sortState.column === sortColumn) {
+                    sortState.ascending = !sortState.ascending;
+                } else {
+                    sortState.column = sortColumn;
+                    sortState.ascending = sortAscending !== null ? sortAscending : true;
+                }
+            }
 
             // Create a map of bar names to their overall rank
             const rankMap = {};
@@ -2555,23 +2586,83 @@
                 rankMap[bar.name] = index + 1;
             });
 
-            const alphabetical = [...barsData].sort((a, b) => a.name.localeCompare(b.name));
+            // Sort the bars based on current sort state
+            const sorted = [...barsData].sort((a, b) => {
+                let valueA, valueB;
+
+                switch(sortState.column) {
+                    case 'name':
+                        return sortState.ascending ?
+                            a.name.localeCompare(b.name) :
+                            b.name.localeCompare(a.name);
+                    case 'rank':
+                        valueA = rankMap[a.name] || 999;
+                        valueB = rankMap[b.name] || 999;
+                        break;
+                    case 'price':
+                        valueA = a.data?.unit_price || 0;
+                        valueB = b.data?.unit_price || 0;
+                        break;
+                    case 'calories':
+                        valueA = a.data?.calories || 0;
+                        valueB = b.data?.calories || 0;
+                        break;
+                    case 'protein':
+                        valueA = a.data?.protein || 0;
+                        valueB = b.data?.protein || 0;
+                        break;
+                    case 'sugar':
+                        valueA = a.data?.sugar || 0;
+                        valueB = b.data?.sugar || 0;
+                        break;
+                    case 'carbs':
+                        valueA = a.data?.net_carbs || 0;
+                        valueB = b.data?.net_carbs || 0;
+                        break;
+                    default:
+                        return 0;
+                }
+
+                return sortState.ascending ? valueA - valueB : valueB - valueA;
+            });
+
+            // Create sort arrow indicator
+            const getSortArrow = (column) => {
+                if (sortState.column === column) {
+                    return `<span class="sort-arrow">${sortState.ascending ? '▲' : '▼'}</span>`;
+                }
+                return '';
+            };
 
             allBarsDiv.innerHTML = `
                 <table class="all-bars-table">
                     <thead>
                         <tr>
-                            <th>Bar Name</th>
-                            <th>Your Rank</th>
-                            <th>Unit Price</th>
-                            <th>Calories</th>
-                            <th>Protein</th>
-                            <th>Sugar</th>
-                            <th>Net Carbs</th>
+                            <th data-sort="name" class="${sortState.column === 'name' ? 'sorted' : ''}">
+                                Bar Name${getSortArrow('name')}
+                            </th>
+                            <th data-sort="rank" class="${sortState.column === 'rank' ? 'sorted' : ''}">
+                                Your Rank${getSortArrow('rank')}
+                            </th>
+                            <th data-sort="price" class="${sortState.column === 'price' ? 'sorted' : ''}">
+                                Unit Price${getSortArrow('price')}
+                            </th>
+                            <th data-sort="calories" class="${sortState.column === 'calories' ? 'sorted' : ''}">
+                                Calories${getSortArrow('calories')}
+                            </th>
+                            <th data-sort="protein" class="${sortState.column === 'protein' ? 'sorted' : ''}">
+                                Protein${getSortArrow('protein')}
+                            </th>
+                            <th data-sort="sugar" class="${sortState.column === 'sugar' ? 'sorted' : ''}">
+                                Sugar${getSortArrow('sugar')}
+                            </th>
+                            <th data-sort="carbs" class="${sortState.column === 'carbs' ? 'sorted' : ''}">
+                                Net Carbs${getSortArrow('carbs')}
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${alphabetical.map(bar => {
+                        ${sorted.map(bar => {
                             const barLink = (bar.url && bar.url.trim()) ? `<a href="${bar.url}" target="_blank" style="color: #2d5016; text-decoration: underline;">${bar.name}</a>` : bar.name;
                             const overallRank = rankMap[bar.name] || '-';
                             return `
@@ -2588,6 +2679,13 @@
                     </tbody>
                 </table>
             `;
+
+            // Add click handlers to table headers
+            document.querySelectorAll('.all-bars-table th[data-sort]').forEach(th => {
+                th.addEventListener('click', () => {
+                    displayAllBars(scoredBars, th.dataset.sort);
+                });
+            });
         }
 
         Object.keys(sliders).forEach(key => {
