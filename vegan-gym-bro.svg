@@ -1,0 +1,84 @@
+<svg viewBox="0 0 800 1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1000" fill="#1a1a1a"/>
+  
+  <!-- Motivational poster background -->
+  <rect x="50" y="50" width="700" height="900" fill="#2d2d2d" stroke="#00ff00" stroke-width="8"/>
+  
+  <!-- Head -->
+  <circle cx="400" cy="200" r="80" fill="#ffdbac"/>
+  
+  <!-- Extremely muscular neck -->
+  <rect x="370" y="260" width="60" height="40" fill="#ffdbac"/>
+  
+  <!-- Hair (man bun) -->
+  <circle cx="400" cy="140" r="25" fill="#8B4513"/>
+  <circle cx="400" cy="125" r="15" fill="#8B4513"/>
+  
+  <!-- Eyes (intense) -->
+  <circle cx="380" cy="190" r="8" fill="white"/>
+  <circle cx="420" cy="190" r="8" fill="white"/>
+  <circle cx="380" cy="190" r="5" fill="black"/>
+  <circle cx="420" cy="190" r="5" fill="black"/>
+  
+  <!-- Angry eyebrows -->
+  <line x1="360" y1="175" x2="395" y2="180" stroke="black" stroke-width="4"/>
+  <line x1="440" y1="175" x2="405" y2="180" stroke="black" stroke-width="4"/>
+  
+  <!-- Beard -->
+  <ellipse cx="400" cy="235" rx="35" ry="25" fill="#8B4513"/>
+  
+  <!-- Tank top with vegan slogan -->
+  <path d="M 330 300 L 330 550 L 470 550 L 470 300 Q 450 320 400 320 Q 350 320 330 300" fill="#00ff00"/>
+  
+  <!-- Massive arms -->
+  <ellipse cx="280" cy="400" rx="50" ry="90" fill="#ffdbac"/>
+  <ellipse cx="520" cy="400" rx="50" ry="90" fill="#ffdbac"/>
+  
+  <!-- Veins on arms -->
+  <path d="M 260 350 Q 265 380 270 410" stroke="#4169E1" stroke-width="3" fill="none"/>
+  <path d="M 540 350 Q 535 380 530 410" stroke="#4169E1" stroke-width="3" fill="none"/>
+  
+  <!-- Text on tank top -->
+  <text x="400" y="380" font-family="Impact, sans-serif" font-size="24" fill="black" text-anchor="middle" font-weight="bold">DO YOU EVEN</text>
+  <text x="400" y="410" font-family="Impact, sans-serif" font-size="24" fill="black" text-anchor="middle" font-weight="bold">LENTIL BRO?</text>
+  
+  <!-- Protein shaker -->
+  <rect x="500" y="480" width="60" height="100" fill="#ff69b4" rx="5"/>
+  <rect x="500" y="460" width="60" height="30" fill="#ff1493" rx="3"/>
+  <circle cx="530" cy="475" r="8" fill="#ffb6c1"/>
+  <text x="530" y="535" font-family="Arial" font-size="12" fill="white" text-anchor="middle" font-weight="bold">PEA</text>
+  <text x="530" y="550" font-family="Arial" font-size="12" fill="white" text-anchor="middle" font-weight="bold">PROTEIN</text>
+  
+  <!-- Abs -->
+  <rect x="370" y="550" width="60" height="30" fill="#e6b895" rx="3"/>
+  <rect x="370" y="585" width="60" height="30" fill="#e6b895" rx="3"/>
+  <rect x="370" y="620" width="60" height="30" fill="#e6b895" rx="3"/>
+  <line x1="400" y1="550" x2="400" y2="650" stroke="#d4a574" stroke-width="2"/>
+  
+  <!-- Shorts -->
+  <path d="M 330 650 L 320 750 L 380 750 L 370 650 Z" fill="#333"/>
+  <path d="M 470 650 L 480 750 L 420 750 L 430 650 Z" fill="#333"/>
+  
+  <!-- Legs (quad definition) -->
+  <ellipse cx="350" cy="820" rx="40" ry="80" fill="#ffdbac"/>
+  <ellipse cx="450" cy="820" rx="40" ry="80" fill="#ffdbac"/>
+  <line x1="350" y1="770" x2="350" y2="870" stroke="#d4a574" stroke-width="3"/>
+  <line x1="450" y1="770" x2="450" y2="870" stroke="#d4a574" stroke-width="3"/>
+  
+  <!-- Sneakers -->
+  <ellipse cx="350" cy="920" rx="45" ry="25" fill="#00ff00"/>
+  <ellipse cx="450" cy="920" rx="45" ry="25" fill="#00ff00"/>
+  
+  <!-- Toxic quotes -->
+  <text x="400" y="120" font-family="Impact, sans-serif" font-size="32" fill="#00ff00" text-anchor="middle" font-weight="bold">PLANT GAINS</text>
+  
+  <text x="100" y="700" font-family="Arial" font-size="16" fill="#00ff00" font-style="italic">"Bro, your protein sources</text>
+  <text x="100" y="720" font-family="Arial" font-size="16" fill="#00ff00" font-style="italic">are literally killing you"</text>
+  
+  <text x="500" y="700" font-family="Arial" font-size="16" fill="#00ff00" font-style="italic">"I get ALL my</text>
+  <text x="500" y="720" font-family="Arial" font-size="16" fill="#00ff00" font-style="italic">gains from PLANTS"</text>
+  
+  <!-- Bottom text -->
+  <text x="400" y="970" font-family="Impact, sans-serif" font-size="28" fill="#00ff00" text-anchor="middle" font-weight="bold">NAMASTE STRONG 🌱💪</text>
+</svg>
