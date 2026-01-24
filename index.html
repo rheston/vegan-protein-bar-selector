@@ -25,25 +25,37 @@
 
         .header-image {
             width: 100%;
-            max-height: 400px;
-            object-fit: contain;
+            height: 100%;
+            object-fit: cover;
             border-radius: 15px;
-            margin-bottom: 20px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            background: rgba(0, 0, 0, 0.2);
         }
 
         .image-placeholder {
             width: 100%;
-            height: 250px;
+            height: 100%;
+            min-height: 400px;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
             border: 3px dashed rgba(255, 255, 255, 0.3);
             cursor: pointer;
+        }
+
+        .two-column-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .image-column {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
 
         .image-placeholder:hover {
@@ -362,6 +374,16 @@
             margin-top: 5px;
         }
 
+        @media (max-width: 900px) {
+            .two-column-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .image-placeholder {
+                min-height: 250px;
+            }
+        }
+
         @media (max-width: 600px) {
             h1 {
                 font-size: 1.8rem;
@@ -390,18 +412,11 @@
 </head>
 <body>
     <div class="container">
-        <div class="image-placeholder" id="headerImage" onclick="openAdminPanel()">
-            <div class="image-placeholder-text">
-                <h3>🔥 ADD YOUR GYM BRO IMAGE HERE 🔥</h3>
-                <p>Click "Admin Panel" button to upload a header image<br>
-                (Toxic masculinity Inkmaster energy required)</p>
-            </div>
-        </div>
-
         <h1>💪 VEGAN PROTEIN BAR SELECTOR 💪</h1>
         <p class="subtitle">Rate how much you care about each criterion (0-10)</p>
 
-        <div class="preferences-card">
+        <div class="two-column-layout">
+            <div class="preferences-card">
             <h2>Your Preferences</h2>
 
             <div class="slider-group">
@@ -444,6 +459,17 @@
                 <input type="range" min="0" max="10" value="7" id="slider-carbs">
             </div>
         </div>
+
+        <div class="image-column">
+            <div class="image-placeholder" id="headerImage" onclick="openAdminPanel()">
+                <div class="image-placeholder-text">
+                    <h3>🔥 ADD YOUR GYM BRO IMAGE HERE 🔥</h3>
+                    <p>Click "Admin Panel" button to upload a header image<br>
+                    (Toxic masculinity Inkmaster energy required)</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
         <div class="results-card">
             <h2>Top 10 Bars for You</h2>
