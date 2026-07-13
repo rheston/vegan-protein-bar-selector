@@ -3356,13 +3356,17 @@
 
         calculateAndDisplay();
 
-        // ================= Community submissions (Supabase) =================
+        // ================= Bars data layer (Supabase) =================
+        // Supabase is the single source of truth for ALL bars once configured.
+        // The `barsData` array baked into this file is only a fallback so the
+        // site still renders if Supabase is unreachable or not yet configured.
         let sbClient = null;
         if (CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY && window.supabase) {
             sbClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
         }
 
-        function communityRowToBar(row) {
+        function rowToBar(row) {
+            const hasRating = row.rating_stars != null && row.rating_count != null;
             return {
                 name: row.name,
                 url: row.url || '',
@@ -3374,30 +3378,27 @@
                     net_carbs: Number(row.net_carbs)
                 },
                 sweetener: row.sweetener || '',
-                rating: null,
-                community: true,
-                _forceRegion: row.region === 'UK' ? 'UK' : 'US'
+                image: row.image || undefined,
+                rating: hasRating ? { stars: Number(row.rating_stars), count: Number(row.rating_count) } : null,
+                _forceRegion: row.region === 'UK' ? 'UK' : 'US',
+                community: row.source === 'community'
             };
         }
 
-        async function loadCommunityBars() {
-            if (!sbClient) return;
+        async function loadBarsFromSupabase() {
+            if (!sbClient) return; // not configured → keep the built-in fallback list
             try {
-                const { data, error } = await sbClient.from('bars').select('*').order('created_at', { ascending: false });
+                const { data, error } = await sbClient.from('bars').select('*').order('name', { ascending: true });
                 if (error) throw error;
-                const seen = new Set(barsData.map(b => b.name.toLowerCase()));
-                (data || []).forEach(row => {
-                    if (row && row.name && !seen.has(row.name.toLowerCase())) {
-                        barsData.push(communityRowToBar(row));
-                        seen.add(row.name.toLowerCase());
-                    }
-                });
-                calculateAndDisplay();
+                if (data && data.length) {
+                    barsData = data.map(rowToBar);   // Supabase becomes the source of truth
+                    calculateAndDisplay();
+                }
             } catch (e) {
-                console.warn('Could not load community bars:', e.message);
+                console.warn('Supabase load failed; using built-in bar list.', e.message);
             }
         }
-        loadCommunityBars();
+        loadBarsFromSupabase();
 
         document.getElementById('submitBarForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -3427,7 +3428,8 @@
                 unit_price: nums.unit_price, calories: nums.calories, protein: nums.protein,
                 sugar: nums.sugar, net_carbs: nums.net_carbs,
                 sweetener: val('sb-sweetener'),
-                url: safeUrl(val('sb-url'))
+                url: safeUrl(val('sb-url')),
+                source: 'community'
             };
             status.className = 'form-status';
             status.textContent = 'Submitting…';
@@ -3439,13 +3441,13 @@
                     return;
                 }
             }
-            barsData.push(communityRowToBar(row));
+            barsData.push(rowToBar(row));
             calculateAndDisplay();
             e.target.reset();
             status.className = 'form-status ok';
             status.textContent = sbClient
                 ? 'Added — it is now in the rankings!'
-                : 'Added for this session (set up the backend to save it globally).';
+                : 'Added for this session (set up Supabase to save it globally).';
         });
 
         // ================= Feedback form (Web3Forms → email) =================
