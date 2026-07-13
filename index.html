@@ -257,6 +257,24 @@
             text-align: right;
         }
 
+        .slider-dimension {
+            color: #2d5016;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .slider-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .scale-header {
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
         input[type="range"] {
             width: 100%;
             height: 8px;
@@ -312,12 +330,38 @@
 
         .bar-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             padding: 15px;
             margin-bottom: 10px;
             background: #f8f9fa;
             border-radius: 10px;
             transition: all 0.2s;
+        }
+
+        .bar-image {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: white;
+            margin-left: 15px;
+            flex-shrink: 0;
+        }
+
+        .bar-rating {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .bar-rating .stars {
+            color: #f5a623;
+            letter-spacing: 1px;
+        }
+
+        .bar-rating .no-rating {
+            color: #aaa;
+            font-style: italic;
         }
 
         .bar-item:hover {
@@ -432,6 +476,112 @@
             font-size: 0.8em;
         }
 
+        .sort-icon {
+            margin-left: 5px;
+            font-size: 0.85em;
+            opacity: 0.45;
+        }
+
+        .all-bars-table th:hover .sort-icon {
+            opacity: 0.9;
+        }
+
+        .region-filter {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            background: white;
+            border-radius: 15px;
+            padding: 16px 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            color: #333;
+            font-weight: 600;
+        }
+
+        .region-filter label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .region-filter input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .contribute-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .contribute-card h2 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .contribute-note {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .contribute-form .field-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .contribute-form label {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #444;
+            flex: 1 1 130px;
+        }
+
+        .contribute-form label.grow {
+            flex: 2 1 220px;
+        }
+
+        .contribute-form input,
+        .contribute-form select,
+        .contribute-form textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: 400;
+        }
+
+        .contribute-form input:focus,
+        .contribute-form select:focus,
+        .contribute-form textarea:focus {
+            outline: none;
+            border-color: #4a7c24;
+        }
+
+        .contribute-form .button {
+            margin-top: 6px;
+        }
+
+        .form-status {
+            margin-left: 14px;
+            font-weight: 600;
+        }
+
+        .form-status.ok { color: #2d5016; }
+        .form-status.err { color: #c41e3a; }
+
         .all-bars-table td {
             padding: 10px 8px;
             border-bottom: 1px solid #e0e0e0;
@@ -511,19 +661,20 @@
             }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="container">
         <h1>💪 VEGAN PROTEIN BAR SELECTOR 💪</h1>
-        <p class="subtitle">Rate how much you care about each criterion (0-10)</p>
 
-        <div class="two-column-layout">
             <div class="preferences-card">
-            <h2>Your Preferences</h2>
+            <h2>What's important to you in a protein bar?</h2>
+
+            <div class="slider-scale scale-header"><span>Not important</span><span>Very important</span></div>
 
             <div class="slider-group">
                 <div class="slider-label">
-                    <span>Price per 100 Calories <small>(lower is better)</small></span>
+                    <span class="slider-dimension">Cheap Calories</span>
                     <span class="slider-value" id="value-price-cal">3</span>
                 </div>
                 <input type="range" min="0" max="10" value="3" id="slider-price-cal">
@@ -531,7 +682,7 @@
 
             <div class="slider-group">
                 <div class="slider-label">
-                    <span>% Protein Calories <small>(higher is better)</small></span>
+                    <span class="slider-dimension">Protein Dense</span>
                     <span class="slider-value" id="value-protein">10</span>
                 </div>
                 <input type="range" min="0" max="10" value="10" id="slider-protein">
@@ -539,15 +690,7 @@
 
             <div class="slider-group">
                 <div class="slider-label">
-                    <span>Price per Gram of Protein <small>(lower is better)</small></span>
-                    <span class="slider-value" id="value-price-protein">0</span>
-                </div>
-                <input type="range" min="0" max="10" value="0" id="slider-price-protein">
-            </div>
-
-            <div class="slider-group">
-                <div class="slider-label">
-                    <span>% Sugar Calories <small>(lower is better)</small></span>
+                    <span class="slider-dimension">Low Sugar</span>
                     <span class="slider-value" id="value-sugar">5</span>
                 </div>
                 <input type="range" min="0" max="10" value="5" id="slider-sugar">
@@ -555,23 +698,18 @@
 
             <div class="slider-group">
                 <div class="slider-label">
-                    <span>% Carbs Calories <small>(lower is better)</small></span>
+                    <span class="slider-dimension">Low Carb</span>
                     <span class="slider-value" id="value-carbs">7</span>
                 </div>
                 <input type="range" min="0" max="10" value="7" id="slider-carbs">
             </div>
         </div>
 
-        <div class="image-column">
-            <div class="image-placeholder" id="headerImage" onclick="openAdminPanel()">
-                <div class="image-placeholder-text">
-                    <h3>🔥 ADD YOUR GYM BRO IMAGE HERE 🔥</h3>
-                    <p>Click "Admin Panel" button to upload a header image<br>
-                    (Toxic masculinity Inkmaster energy required)</p>
-                </div>
-            </div>
+        <div class="region-filter">
+            <span>Show bars from:</span>
+            <label><input type="checkbox" id="filter-us" checked> 🇺🇸 US</label>
+            <label><input type="checkbox" id="filter-uk" checked> 🇬🇧 UK</label>
         </div>
-    </div>
 
         <div class="results-card">
             <h2>Top 10 Bars for You</h2>
@@ -579,9 +717,50 @@
         </div>
 
         <div class="all-bars-section">
-            <h2>All Bars (Alphabetically)</h2>
-            <p style="color: #666; margin-bottom: 10px;">Click any bar name to view details. Rankings show how each bar compares on each criterion (lower rank = better).</p>
+            <h2>All Bars</h2>
             <div id="allBars"></div>
+        </div>
+
+        <div class="contribute-card">
+            <h2>➕ Add a Bar</h2>
+            <form id="submitBarForm" class="contribute-form" novalidate>
+                <div class="field-row">
+                    <label class="grow">Bar name *<input type="text" id="sb-name" required></label>
+                    <label>Region *
+                        <select id="sb-region"><option value="US">US</option><option value="UK">UK</option></select>
+                    </label>
+                </div>
+                <div class="field-row">
+                    <label>Unit price ($) *<input type="number" step="0.01" min="0" id="sb-price" required></label>
+                    <label>Calories *<input type="number" step="1" min="1" id="sb-cal" required></label>
+                    <label>Protein (g) *<input type="number" step="0.1" min="0" id="sb-protein" required></label>
+                </div>
+                <div class="field-row">
+                    <label>Sugar (g) *<input type="number" step="0.1" min="0" id="sb-sugar" required></label>
+                    <label>Net carbs (g) *<input type="number" step="0.1" min="0" id="sb-carbs" required></label>
+                </div>
+                <div class="field-row">
+                    <label class="grow">Sweetener(s)<input type="text" id="sb-sweetener" placeholder="e.g. Monk Fruit, Stevia"></label>
+                    <label class="grow">Product URL<input type="url" id="sb-url" placeholder="https://..."></label>
+                </div>
+                <button type="submit" class="button">Submit Bar</button>
+                <span id="sb-status" class="form-status"></span>
+            </form>
+        </div>
+
+        <div class="contribute-card">
+            <h2>💬 Feedback</h2>
+            <form id="feedbackForm" class="contribute-form" novalidate>
+                <div class="field-row">
+                    <label class="grow">Your email (optional)<input type="email" id="fb-email"></label>
+                    <label>Type
+                        <select id="fb-type"><option>Bug</option><option>Feature request</option><option>Data correction</option><option>Other</option></select>
+                    </label>
+                </div>
+                <label>Message *<textarea id="fb-message" rows="4" required></textarea></label>
+                <button type="submit" class="button">Send Feedback</button>
+                <span id="fb-status" class="form-status"></span>
+            </form>
         </div>
     </div>
 
@@ -593,15 +772,6 @@
                 <h2>Admin Panel</h2>
                 <button class="close-button" onclick="closeAdminPanel()">&times;</button>
             </div>
-
-            <div class="form-group">
-                <label>Header Image URL</label>
-                <input type="text" id="imageUrl" placeholder="https://example.com/your-gym-bro-image.jpg">
-                <p class="help-text">Paste an image URL here (right-click an image online and "Copy Image Address")</p>
-                <button class="button" onclick="saveHeaderImage()">Update Header Image</button>
-            </div>
-
-            <hr style="margin: 30px 0;">
 
             <h3>Manage Protein Bars</h3>
             <p class="help-text">Edit the bar data below. Format: JSON array with name, ranks, and sweetener for each bar.</p>
@@ -619,16 +789,30 @@
     </div>
 
     <script>
+        // ===== BACKEND CONFIG — paste your keys here (see SETUP.md) =====
+        // Leave blank to run without a backend (submissions stay session-local,
+        // feedback form is disabled). Fill in to enable global submissions + feedback email.
+        const CONFIG = {
+            SUPABASE_URL: '',        // e.g. https://abcd1234.supabase.co
+            SUPABASE_ANON_KEY: '',   // public "anon" API key from Supabase
+            WEB3FORMS_KEY: ''        // access key from https://web3forms.com (emails you)
+        };
+
         let barsData = [
   {
     "name": "Pegan Thin",
-    "url": "https://www.amazon.com/stores/page/605F3314-E129-4492-9ED5-D74E7F13200E?ingress=2&visitId=f4b67c5d-116f-4b70-b1b4-c4fde3edbcfa&ref_=ast_bln",
+    "image": "https://m.media-amazon.com/images/I/71PB2i9MV4L._AC_SL1280_.jpg",
+    "rating": {
+      "stars": 3,
+      "count": 118
+    },
+    "url": "https://www.amazon.com/dp/B0761RJQBB",
     "data": {
       "unit_price": 2.88,
       "calories": 190,
-      "protein": 20.0,
-      "sugar": 1.0,
-      "net_carbs": 1.0
+      "protein": 20,
+      "sugar": 1,
+      "net_carbs": 1
     },
     "ranks": {
       "price_per_100cal": 85,
@@ -641,13 +825,18 @@
   },
   {
     "name": "No Cow",
-    "url": "https://nocow.com/collections/protein-bars",
+    "image": "https://cdn.shopify.com/s/files/1/1300/3623/files/No_Cow_Product_Detail_Page_Main_Product_Images_PBCC.jpg?v=1762964618",
+    "rating": {
+      "stars": 4.3,
+      "count": 2286
+    },
+    "url": "https://nocow.com/products/peanut-butter-chocolate-chip-protein-bar",
     "data": {
       "unit_price": 2.75,
       "calories": 200,
-      "protein": 21.0,
-      "sugar": 1.0,
-      "net_carbs": 4.0
+      "protein": 21,
+      "sugar": 1,
+      "net_carbs": 4
     },
     "ranks": {
       "price_per_100cal": 77,
@@ -656,17 +845,22 @@
       "sugar_cals": 6,
       "carbs_cals": 8
     },
-    "sweetener": "Erythritol"
+    "sweetener": "Erythritol, Stevia, Monk Fruit"
   },
   {
     "name": "Raw Rev Glo",
-    "url": "https://www.amazon.com/Raw-Rev-Glo-Keto-Friendly-Plant-Based/dp/B00PVS5PCE",
+    "image": "https://m.media-amazon.com/images/I/91oFILmY4GL._SL1500_.jpg",
+    "rating": {
+      "stars": 3.8,
+      "count": 1408
+    },
+    "url": "https://www.amazon.com/dp/B00PVS5PCE",
     "data": {
-      "unit_price": 2.0,
+      "unit_price": 2,
       "calories": 180,
-      "protein": 15.0,
-      "sugar": 2.0,
-      "net_carbs": 3.0
+      "protein": 15,
+      "sugar": 2,
+      "net_carbs": 3
     },
     "ranks": {
       "price_per_100cal": 46,
@@ -679,11 +873,16 @@
   },
   {
     "name": "Free Soul",
-    "url": "https://www.amazon.com/Free-Soul-Chocolate-Sucralose-Speculoos/dp/B09M4BJ5S7/ref=sr_1_32_sspa?crid=121SJN5KOBVHU&keywords=vegan%2Bprotein%2Bbar&qid=1659651513&s=grocery&sprefix=vegan%2Bprotein%2Bba%2Cgrocery%2C109&sr=1-32-spons&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEzVEtPUVpRMVlGWEMxJmVuY3J5cHRlZElkPUEwOTE1MDE5MUxMMjZUNDNOTjBTUSZlbmNyeXB0ZWRBZElkPUEwNzM3NjA3WkFYR1g1TVVETzBaJndpZGdldE5hbWU9c3BfYnRmJmFjdGlvbj1jbGlja1JlZGlyZWN0JmRvTm90TG9nQ2xpY2s9dHJ1ZQ&th=1",
+    "image": "https://m.media-amazon.com/images/I/61pHHwFBiKL._SL1000_.jpg",
+    "rating": {
+      "stars": 3.6,
+      "count": 95
+    },
+    "url": "https://www.amazon.com/dp/B09M4BJ5S7",
     "data": {
-      "unit_price": 2.0,
+      "unit_price": 2,
       "calories": 156,
-      "protein": 15.0,
+      "protein": 15,
       "sugar": 0.3,
       "net_carbs": 8.5
     },
@@ -694,17 +893,22 @@
       "sugar_cals": 1,
       "carbs_cals": 35
     },
-    "sweetener": "Maltitol"
+    "sweetener": "Maltitol, Glycerin, Stevia"
   },
   {
     "name": "Misfits",
-    "url": "https://us.misfits.health/collections/protein-bars",
+    "image": "https://cdn.shopify.com/s/files/1/0531/7479/6488/files/MIS1.26IndividualBarCrossSectionR1.1_CookieDough.jpg?v=1771496002",
+    "rating": {
+      "stars": 4.3,
+      "count": 2572
+    },
+    "url": "https://us.misfits.health/products/cookie-dough-gf-12-pack",
     "data": {
       "unit_price": 2.5,
       "calories": 190,
-      "protein": 15.0,
-      "sugar": 1.0,
-      "net_carbs": 6.0
+      "protein": 15,
+      "sugar": 1,
+      "net_carbs": 6
     },
     "ranks": {
       "price_per_100cal": 70,
@@ -713,17 +917,22 @@
       "sugar_cals": 10,
       "carbs_cals": 18
     },
-    "sweetener": "Glycerin"
+    "sweetener": "Xylitol, Sugar Beet Fiber"
   },
   {
     "name": "2FIT",
-    "url": "https://www.2fitbrands.com/collections/frontpage",
+    "image": "https://m.media-amazon.com/images/I/61yTYEH4h0L._SL1080_.jpg",
+    "rating": {
+      "stars": 3.8,
+      "count": 78
+    },
+    "url": "https://www.amazon.com/dp/B07QF3GPK7",
     "data": {
       "unit_price": 2.08,
       "calories": 190,
-      "protein": 13.0,
-      "sugar": 1.0,
-      "net_carbs": 6.0
+      "protein": 13,
+      "sugar": 1,
+      "net_carbs": 6
     },
     "ranks": {
       "price_per_100cal": 43,
@@ -732,17 +941,19 @@
       "sugar_cals": 10,
       "carbs_cals": 18
     },
-    "sweetener": "Tapioca Syrup"
+    "sweetener": "Tapioca Syrup, Stevia"
   },
   {
     "name": "Daryl's Vegan Line",
-    "url": "https://darylsbars.com/vegan-line-protein-bars/",
+    "image": "https://m.media-amazon.com/images/I/61NU6PCpPqL._SL1000_.jpg",
+    "rating": null,
+    "url": "https://www.amazon.com/dp/B0FPMKVKW4",
     "data": {
       "unit_price": 2.5,
       "calories": 230,
-      "protein": 20.0,
-      "sugar": 6.0,
-      "net_carbs": 8.0
+      "protein": 20,
+      "sugar": 6,
+      "net_carbs": 8
     },
     "ranks": {
       "price_per_100cal": 40,
@@ -755,13 +966,18 @@
   },
   {
     "name": "IQBAR",
-    "url": "https://www.eatiqbar.com/collections/all-bars",
+    "image": "https://cdn.shopify.com/s/files/1/1682/9837/files/SCC.png?v=1770071644",
+    "rating": {
+      "stars": 4.3,
+      "count": 8123
+    },
+    "url": "https://www.eatiqbar.com/products/salted-caramel-chip-12-bars",
     "data": {
       "unit_price": 2.08,
       "calories": 180,
-      "protein": 12.0,
-      "sugar": 2.0,
-      "net_carbs": 3.0
+      "protein": 12,
+      "sugar": 2,
+      "net_carbs": 3
     },
     "ranks": {
       "price_per_100cal": 53,
@@ -774,13 +990,18 @@
   },
   {
     "name": "Barebells Plant Based",
-    "url": "https://shop.barebells.com/product-category/plant-based/",
+    "image": "https://cdn.shopify.com/s/files/1/0930/3965/7283/files/Barebells_Vegan_Caramel_Choco_Chip_9f913bf1.png?v=1772551120",
+    "rating": {
+      "stars": 3.8,
+      "count": 345
+    },
+    "url": "https://shop.barebells.com/products/barebells-vegan-caramel-choco-chip",
     "data": {
       "unit_price": 2.42,
       "calories": 210,
-      "protein": 15.0,
-      "sugar": 1.0,
-      "net_carbs": 14.0
+      "protein": 15,
+      "sugar": 1,
+      "net_carbs": 14
     },
     "ranks": {
       "price_per_100cal": 51,
@@ -789,17 +1010,22 @@
       "sugar_cals": 5,
       "carbs_cals": 40
     },
-    "sweetener": "Maltitol"
+    "sweetener": "Maltitol, Oligofructose, Sucralose"
   },
   {
     "name": "NuGo Slim",
-    "url": "https://www.nugonutrition.com/collections/slim/lifestyle_vegan",
+    "image": "https://cdn.shopify.com/s/files/1/0328/7993/5619/files/BrownieCrunch-min_3b80a9c9-1371-4094-a3ea-e44842e952e5.png?v=1767810686",
+    "rating": {
+      "stars": 4.1,
+      "count": 263
+    },
+    "url": "https://nugo.com/products/nugo-slim-brownie-crunch",
     "data": {
-      "unit_price": 2.0,
+      "unit_price": 2,
       "calories": 170,
-      "protein": 17.0,
-      "sugar": 3.0,
-      "net_carbs": 9.0
+      "protein": 17,
+      "sugar": 3,
+      "net_carbs": 9
     },
     "ranks": {
       "price_per_100cal": 59,
@@ -812,13 +1038,13 @@
   },
   {
     "name": "SimplyProtein Snack",
-    "url": "https://shop.simplyprotein.com/Snack-Bars/c/SimplyProtein@SnackBars",
+    "url": "https://simplyprotein.com/products/ehs-test-dark-chocolate-almond-simplyprotein-r-bar",
     "data": {
       "unit_price": 1.75,
       "calories": 160,
-      "protein": 12.0,
-      "sugar": 2.0,
-      "net_carbs": 9.0
+      "protein": 12,
+      "sugar": 2,
+      "net_carbs": 9
     },
     "ranks": {
       "price_per_100cal": 42,
@@ -827,11 +1053,16 @@
       "sugar_cals": 26,
       "carbs_cals": 36
     },
-    "sweetener": "Glycerin"
+    "sweetener": "Glycerin, Cane Sugar, Stevia",
+    "image": "https://cdn.shopify.com/s/files/1/0583/8782/4802/files/US_Crispy_4pack_DCA_alpha_Front_186f0de3-8f08-4411-ba62-c05039676092.png?v=1757960413",
+    "rating": {
+      "stars": 3.4,
+      "count": 18
+    }
   },
   {
     "name": "Pulsin Keto (UK)",
-    "url": "https://www.pulsin.co.uk/product/mixed-keto-trial-pack/",
+    "url": "https://www.pulsin.co.uk/products/pulsin-choc-fudge-peanut-keto-bar-18x50g",
     "data": {
       "unit_price": 2.61,
       "calories": 247,
@@ -846,7 +1077,12 @@
       "sugar_cals": 16,
       "carbs_cals": 99
     },
-    "sweetener": "Xylitol"
+    "sweetener": "Xylitol",
+    "image": "https://cdn.shopify.com/s/files/1/0997/9887/6499/files/9b7d4105-8ee8-40c5-bd2a-0a5938a2a179.jpg?v=1769040283",
+    "rating": {
+      "stars": 4.4,
+      "count": 459
+    }
   },
   {
     "name": "PhD Nutrition Smart Bar Plant (UK)",
@@ -854,9 +1090,9 @@
     "data": {
       "unit_price": 3.32,
       "calories": 247,
-      "protein": 21.0,
+      "protein": 21,
       "sugar": 0.6,
-      "net_carbs": 20.0
+      "net_carbs": 20
     },
     "ranks": {
       "price_per_100cal": 74,
@@ -865,17 +1101,22 @@
       "sugar_cals": 2,
       "carbs_cals": 55
     },
-    "sweetener": "Xylitol"
+    "sweetener": "Xylitol, Maltitol, Stevia",
+    "image": "https://images.hollandandbarrettimages.co.uk/productimages/HB/1500/050299_A.jpg",
+    "rating": {
+      "stars": 4.2,
+      "count": 234
+    }
   },
   {
     "name": "Garden of Life Organic Fit Protein",
-    "url": "https://www.gardenoflife.com/products/our-protein/raw-organic-fit?product_form=16450",
+    "url": "https://www.amazon.com/dp/B01N65M4ZB",
     "data": {
       "unit_price": 2.67,
       "calories": 200,
-      "protein": 14.0,
-      "sugar": 1.0,
-      "net_carbs": 13.0
+      "protein": 14,
+      "sugar": 1,
+      "net_carbs": 13
     },
     "ranks": {
       "price_per_100cal": 73,
@@ -884,17 +1125,22 @@
       "sugar_cals": 6,
       "carbs_cals": 39
     },
-    "sweetener": "Glycerin"
+    "sweetener": "Glycerin, Yacon Syrup",
+    "image": "https://m.media-amazon.com/images/I/71EViSN5mSL._AC_SL1500_.jpg",
+    "rating": {
+      "stars": 4.4,
+      "count": 943
+    }
   },
   {
     "name": "Lenny and Larry's Keto Cookie",
-    "url": "https://www.amazon.com/Lenny-Larrys-Plant-Based-Chocolate-Cookies/dp/B07WXVB9J3?th=1",
+    "url": "https://www.amazon.com/dp/B07WXVB9J3",
     "data": {
       "unit_price": 1.83,
       "calories": 200,
-      "protein": 9.0,
-      "sugar": 1.0,
-      "net_carbs": 3.0
+      "protein": 9,
+      "sugar": 1,
+      "net_carbs": 3
     },
     "ranks": {
       "price_per_100cal": 20,
@@ -903,11 +1149,16 @@
       "sugar_cals": 6,
       "carbs_cals": 4
     },
-    "sweetener": "Erythritol"
+    "sweetener": "Erythritol, Stevia",
+    "image": "https://m.media-amazon.com/images/I/711fk2BxVtL._SL1500_.jpg",
+    "rating": {
+      "stars": 3.7,
+      "count": 1908
+    }
   },
   {
     "name": "Pulsin Protein (UK)",
-    "url": "https://www.pulsin.co.uk/product/vanilla-choc-almond-protein-bar/",
+    "url": "https://www.pulsin.co.uk/products/pulsin-vanilla-choc-and-almond-protein-bar-18x50g",
     "data": {
       "unit_price": 2.35,
       "calories": 238,
@@ -922,17 +1173,22 @@
       "sugar_cals": 35,
       "carbs_cals": 15
     },
-    "sweetener": "Xylitol"
+    "sweetener": "Xylitol, Agave Nectar, Concentrated Grape Juice",
+    "image": "https://cdn.shopify.com/s/files/1/0997/9887/6499/files/Pulsin-Vanilla-Choc-and-Almond-Protein-Bar-18x50g.png?v=1760819105",
+    "rating": {
+      "stars": 4.2,
+      "count": 106
+    }
   },
   {
     "name": "Trek Power (UK)",
-    "url": "https://eattrek.com/products/protein-power-bars/",
+    "url": "https://www.hollandandbarrett.com/shop/product/trek-power-peanut-butter-crunch-protein-bar-60046256",
     "data": {
       "unit_price": 2.13,
       "calories": 225,
       "protein": 15.4,
-      "sugar": 11.0,
-      "net_carbs": 8.0
+      "sugar": 11,
+      "net_carbs": 8
     },
     "ranks": {
       "price_per_100cal": 23,
@@ -941,17 +1197,22 @@
       "sugar_cals": 69,
       "carbs_cals": 24
     },
-    "sweetener": "Dates"
+    "sweetener": "Dates, Glucose syrup, Cane Sugar, Glycerol, Date syrup, Concentrated grape juice",
+    "image": "https://www.sourceraw.com/image/cache/catalog/products/EP-TRK-P-002_1-600x315w.jpg",
+    "rating": {
+      "stars": 4.4,
+      "count": 165
+    }
   },
   {
     "name": "CanDo Keto Crisp (some flavors)",
-    "url": "https://tastecando.com/",
+    "url": "https://www.amazon.com/Keto-Krisp-Protein-Friendly-Gluten/dp/B07NX1NC3S",
     "data": {
-      "unit_price": 3.0,
+      "unit_price": 3,
       "calories": 190,
-      "protein": 11.0,
-      "sugar": 2.0,
-      "net_carbs": 8.0
+      "protein": 11,
+      "sugar": 2,
+      "net_carbs": 8
     },
     "ranks": {
       "price_per_100cal": 87,
@@ -960,17 +1221,22 @@
       "sugar_cals": 19,
       "carbs_cals": 26
     },
-    "sweetener": "Erythritol"
+    "sweetener": "Erythritol, Stevia",
+    "image": "https://i5.walmartimages.com/seo/CanDo-Keto-Krisp-Protein-Rich-Snack-Bars-Variety-Pack-12-Pack_10a9380a-76f0-415a-9228-f50e1c8b873c.a251f6072fb8a7bd47db5b8eb666a95c.jpeg",
+    "rating": {
+      "stars": 4.7,
+      "count": 1185
+    }
   },
   {
     "name": "NuSkool Krunch Bar",
-    "url": "https://nuskoolsnacks.com/collections/krunch-bars",
+    "url": "https://nuskoolsnacks.com/products/double-chocolate-krunch-bar-12ct",
     "data": {
-      "unit_price": 3.0,
+      "unit_price": 3,
       "calories": 170,
-      "protein": 10.0,
-      "sugar": 2.0,
-      "net_carbs": 6.0
+      "protein": 10,
+      "sugar": 2,
+      "net_carbs": 6
     },
     "ranks": {
       "price_per_100cal": 92,
@@ -979,17 +1245,19 @@
       "sugar_cals": 25,
       "carbs_cals": 23
     },
-    "sweetener": "Allulose"
+    "sweetener": "Allulose, Monk Fruit",
+    "image": "https://nuskoolsnacks.com/cdn/shop/files/DC5Snack.png",
+    "rating": null
   },
   {
     "name": "Garden of Life SPORT Organic",
-    "url": "https://www.gardenoflife.com/products/our-protein/bars-protein",
+    "url": "https://www.amazon.com/Garden-Life-Organic-Protein-Chocolate/dp/B01N9D5NB6",
     "data": {
       "unit_price": 3.17,
       "calories": 280,
-      "protein": 20.0,
-      "sugar": 6.0,
-      "net_carbs": 26.0
+      "protein": 20,
+      "sugar": 6,
+      "net_carbs": 26
     },
     "ranks": {
       "price_per_100cal": 48,
@@ -998,17 +1266,22 @@
       "sugar_cals": 33,
       "carbs_cals": 68
     },
-    "sweetener": "Tapioca Syrup"
+    "sweetener": "Tapioca Syrup, Glycerin, Erythritol, Stevia",
+    "image": "https://images-na.ssl-images-amazon.com/images/P/B01N9D5NB6.01._SCLZZZZZZZ_.jpg",
+    "rating": {
+      "stars": 4.4,
+      "count": 708
+    }
   },
   {
     "name": "AMRITA",
-    "url": "https://www.amazon.com/Amrita-Plant-Friendly-Variety-Protein/dp/B08G56QZKC/ref=sr_1_35?crid=121SJN5KOBVHU&keywords=vegan+protein+bar&qid=1659651928&s=grocery&sprefix=vegan+protein+ba%2Cgrocery%2C109&sr=1-35",
+    "url": "https://www.amazon.com/Amrita-Plant-Friendly-Variety-Protein/dp/B08G56QZKC",
     "data": {
       "unit_price": 2.17,
       "calories": 240,
-      "protein": 15.0,
-      "sugar": 9.0,
-      "net_carbs": 18.0
+      "protein": 15,
+      "sugar": 9,
+      "net_carbs": 18
     },
     "ranks": {
       "price_per_100cal": 19,
@@ -1017,7 +1290,12 @@
       "sugar_cals": 50,
       "carbs_cals": 46
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://www.amritahealthfoods.com/cdn/shop/files/amrita-health-foods-high-protein-bars-variety-pack-1195562423.jpg?v=1774214368",
+    "rating": {
+      "stars": 4,
+      "count": 385
+    }
   },
   {
     "name": "Ridiculous (UK)",
@@ -1036,17 +1314,22 @@
       "sugar_cals": 13,
       "carbs_cals": 7
     },
-    "sweetener": "Xylitol"
+    "sweetener": "Xylitol, Maltitol, Glycerine, Stevia",
+    "image": "https://img.theproteinworks.com/v7/_media/catalog/product/cache/d37e42c448b3dbec3a8a7ecf127990cd/r/i/ridiculous_box_-_wild_chocolate_peanut.png",
+    "rating": {
+      "stars": 3.7,
+      "count": 602
+    }
   },
   {
     "name": "Aloha",
-    "url": "https://aloha.com/collections/protein-bars",
+    "url": "https://aloha.com/products/variety-pack-protein-bar",
     "data": {
       "unit_price": 2.75,
       "calories": 235,
-      "protein": 14.0,
-      "sugar": 5.0,
-      "net_carbs": 16.0
+      "protein": 14,
+      "sugar": 5,
+      "net_carbs": 16
     },
     "ranks": {
       "price_per_100cal": 57,
@@ -1055,17 +1338,22 @@
       "sugar_cals": 32,
       "carbs_cals": 41
     },
-    "sweetener": "Cane Sugar"
+    "sweetener": "Cane Sugar, Tapioca Syrup, Glycerin, Monk Fruit",
+    "image": "https://aloha.com/cdn/shop/files/842096108525_MAIN.webp",
+    "rating": {
+      "stars": 4.5,
+      "count": 8432
+    }
   },
   {
     "name": "Love Good Fats Chewy Nutty (some flavors)",
-    "url": "https://lovegoodfats.com/collections/chewy-nutty-bars",
+    "url": "https://www.amazon.com/Love-Good-Fats-Plant-Based-Bars/dp/B08KGQXVTT",
     "data": {
       "unit_price": 2.21,
       "calories": 190,
-      "protein": 9.0,
-      "sugar": 2.0,
-      "net_carbs": 5.0
+      "protein": 9,
+      "sugar": 2,
+      "net_carbs": 5
     },
     "ranks": {
       "price_per_100cal": 54,
@@ -1074,17 +1362,21 @@
       "sugar_cals": 19,
       "carbs_cals": 13
     },
-    "sweetener": "Sugar"
+    "sweetener": "Sugar, Glycerin, Stevia",
+    "rating": {
+      "stars": 3.9,
+      "count": 125
+    }
   },
   {
     "name": "Vega Sport Protein",
-    "url": "https://proteinpowder.com/product/vega-sport-protein-bars/",
+    "url": "https://www.amazon.com/Vega-Sport-Protein-Crispy-Chocolate/dp/B079P7BFYB",
     "data": {
       "unit_price": 2.5,
       "calories": 300,
-      "protein": 20.0,
-      "sugar": 14.0,
-      "net_carbs": 24.0
+      "protein": 20,
+      "sugar": 14,
+      "net_carbs": 24
     },
     "ranks": {
       "price_per_100cal": 14,
@@ -1093,17 +1385,22 @@
       "sugar_cals": 61,
       "carbs_cals": 52
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://images-na.ssl-images-amazon.com/images/P/B079P7BFYB.01._SCLZZZZZZZ_.jpg",
+    "rating": {
+      "stars": 4.6,
+      "count": 965
+    }
   },
   {
     "name": "good! (some flavors)",
-    "url": "https://goodsnacks.com/collections/all",
+    "url": "https://goodsnacks.com/products/choc-p-b",
     "data": {
       "unit_price": 2.17,
       "calories": 210,
-      "protein": 15.0,
-      "sugar": 10.0,
-      "net_carbs": 18.0
+      "protein": 15,
+      "sugar": 10,
+      "net_carbs": 18
     },
     "ranks": {
       "price_per_100cal": 36,
@@ -1112,17 +1409,19 @@
       "sugar_cals": 64,
       "carbs_cals": 59
     },
-    "sweetener": "Tapioca Syrup"
+    "sweetener": "Tapioca Syrup, Cane Sugar, Glycerin",
+    "image": "https://goodsnacks.com/cdn/shop/products/product-chocpb-1-a_1200x.png",
+    "rating": null
   },
   {
     "name": "Lenny and Larry's The Complete Cookie-fied Bar",
-    "url": "https://www.lennylarry.com/collections/the-complete-cookie-fied-bar",
+    "url": "https://www.lennylarry.com/collections/the-complete-cookie-fied-bar/products/cookies-creme-box-of-9",
     "data": {
       "unit_price": 1.89,
       "calories": 170,
-      "protein": 12.0,
-      "sugar": 6.0,
-      "net_carbs": 15.0
+      "protein": 12,
+      "sugar": 6,
+      "net_carbs": 15
     },
     "ranks": {
       "price_per_100cal": 44,
@@ -1131,7 +1430,12 @@
       "sugar_cals": 48,
       "carbs_cals": 60
     },
-    "sweetener": "Molasses"
+    "sweetener": "Molasses, Agave",
+    "image": "https://www.lennylarry.com/cdn/shop/files/1_Hero_FilmStrip_CCR_45g-9ct_Standing_100324_1000x_05c7d2b7-ab50-412e-9417-ff69c2255014.png",
+    "rating": {
+      "stars": 4.3,
+      "count": 3184
+    }
   },
   {
     "name": "Vega 20g",
@@ -1139,9 +1443,9 @@
     "data": {
       "unit_price": 2.5,
       "calories": 290,
-      "protein": 20.0,
-      "sugar": 16.0,
-      "net_carbs": 23.0
+      "protein": 20,
+      "sugar": 16,
+      "net_carbs": 23
     },
     "ranks": {
       "price_per_100cal": 17,
@@ -1150,17 +1454,22 @@
       "sugar_cals": 75,
       "carbs_cals": 51
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://images-na.ssl-images-amazon.com/images/P/B079NZXGD8.01._SCLZZZZZZZ_.jpg",
+    "rating": {
+      "stars": 4.6,
+      "count": 965
+    }
   },
   {
     "name": "Dr Smood Smart",
-    "url": "https://www.drsmood.com/collections/bars-supplements",
+    "url": "https://www.amazon.com/Dr-Smood-Smart-Snack-Nutrition/dp/B0D2PC2SYV",
     "data": {
       "unit_price": 4.33,
       "calories": 250,
-      "protein": 12.0,
-      "sugar": 2.0,
-      "net_carbs": 6.0
+      "protein": 12,
+      "sugar": 2,
+      "net_carbs": 6
     },
     "ranks": {
       "price_per_100cal": 91,
@@ -1169,17 +1478,19 @@
       "sugar_cals": 17,
       "carbs_cals": 12
     },
-    "sweetener": "Monk Fruit"
+    "sweetener": "Monk Fruit",
+    "image": "https://dhgf5mcbrms62.cloudfront.net/109991824/global/ikKLv1R-1200x1200.png",
+    "rating": null
   },
   {
     "name": "PureFit Nutrition",
-    "url": "https://purefit.com/collections/protein-bars",
+    "url": "https://www.amazon.com/PureFit-Chocolate-Nutrition-Performance-Enhancement/dp/B000EDM9Z2",
     "data": {
       "unit_price": 2.99,
       "calories": 210,
-      "protein": 20.0,
-      "sugar": 9.0,
-      "net_carbs": 19.0
+      "protein": 20,
+      "sugar": 9,
+      "net_carbs": 19
     },
     "ranks": {
       "price_per_100cal": 79,
@@ -1188,17 +1499,22 @@
       "sugar_cals": 56,
       "carbs_cals": 65
     },
-    "sweetener": "Sugar"
+    "sweetener": "Agave, Sugar",
+    "image": "https://images-na.ssl-images-amazon.com/images/P/B000EDM9Z2.01._SCLZZZZZZZ_.jpg",
+    "rating": {
+      "stars": 3.9,
+      "count": 65
+    }
   },
   {
     "name": "BHU Keto",
-    "url": "https://bhufoods.com/collections/keto-protein-bars",
+    "url": "https://bhufoods.com/collections/bars-2025/products/chocolatey-peanut-butter",
     "data": {
       "unit_price": 3.12,
       "calories": 270,
-      "protein": 8.0,
-      "sugar": 1.0,
-      "net_carbs": 2.0
+      "protein": 8,
+      "sugar": 1,
+      "net_carbs": 2
     },
     "ranks": {
       "price_per_100cal": 52,
@@ -1207,17 +1523,22 @@
       "sugar_cals": 3,
       "carbs_cals": 3
     },
-    "sweetener": "Monk Fruit"
+    "sweetener": "Monk Fruit",
+    "image": "https://bhufoods.com/cdn/shop/files/BHU_RSB_PB_BAR_FRONT_14291c3d-7214-4dce-b2c3-2fb888290012.png",
+    "rating": {
+      "stars": 1.5,
+      "count": 2
+    }
   },
   {
     "name": "Orgain Protein Snack Bar",
-    "url": "https://orgain.com/collections/protein-bar",
+    "url": "https://orgain.com/products/organic-protein-bar-peanut-butter-chocolate-chunk",
     "data": {
-      "unit_price": 2.0,
+      "unit_price": 2,
       "calories": 140,
-      "protein": 10.0,
-      "sugar": 3.0,
-      "net_carbs": 14.0
+      "protein": 10,
+      "sugar": 3,
+      "net_carbs": 14
     },
     "ranks": {
       "price_per_100cal": 80,
@@ -1226,17 +1547,22 @@
       "sugar_cals": 33,
       "carbs_cals": 72
     },
-    "sweetener": "Cane Sugar"
+    "sweetener": "Cane Sugar, Erythritol",
+    "image": "https://orgain.com/cdn/shop/files/Website-Bars-MainRender-PBCC_1024x.webp",
+    "rating": {
+      "stars": 4.1,
+      "count": 5675
+    }
   },
   {
     "name": "SimplyProtein Cookie",
-    "url": "https://shop.simplyprotein.com/cookie-bars/c/simplyprotein@bakedbars",
+    "url": "https://www.amazon.com/dp/B07GDTZSR2",
     "data": {
       "unit_price": 5.66,
       "calories": 210,
-      "protein": 11.0,
-      "sugar": 3.0,
-      "net_carbs": 8.0
+      "protein": 11,
+      "sugar": 3,
+      "net_carbs": 8
     },
     "ranks": {
       "price_per_100cal": 96,
@@ -1245,17 +1571,22 @@
       "sugar_cals": 27,
       "carbs_cals": 25
     },
-    "sweetener": "Sugar"
+    "sweetener": "Sugar, Stevia",
+    "image": "https://m.media-amazon.com/images/I/71+3ku11AUL._SL1500_.jpg",
+    "rating": {
+      "stars": 4.2,
+      "count": 620
+    }
   },
   {
     "name": "Clif Builders",
-    "url": "https://shop.clifbar.com/collections/builders",
+    "url": "https://www.amazon.com/dp/B007D6DZ1K",
     "data": {
       "unit_price": 1.8,
       "calories": 280,
-      "protein": 20.0,
-      "sugar": 17.0,
-      "net_carbs": 28.0
+      "protein": 20,
+      "sugar": 17,
+      "net_carbs": 28
     },
     "ranks": {
       "price_per_100cal": 7,
@@ -1264,17 +1595,22 @@
       "sugar_cals": 83,
       "carbs_cals": 72
     },
-    "sweetener": "Cane Syrup"
+    "sweetener": "Cane Syrup, Cane Sugar, Brown Rice Syrup, Glycerin, Chicory Fiber Syrup",
+    "image": "https://m.media-amazon.com/images/I/81dgFOlEW6L._SL1500_.jpg",
+    "rating": {
+      "stars": 4.5,
+      "count": 2051
+    }
   },
   {
     "name": "Dang",
-    "url": "https://dangfoods.com/collections/dang-bars",
+    "url": "https://www.amazon.com/dp/B07GY4FK2W",
     "data": {
       "unit_price": 2.77,
       "calories": 210,
-      "protein": 9.0,
-      "sugar": 3.0,
-      "net_carbs": 5.0
+      "protein": 9,
+      "sugar": 3,
+      "net_carbs": 5
     },
     "ranks": {
       "price_per_100cal": 71,
@@ -1283,17 +1619,22 @@
       "sugar_cals": 27,
       "carbs_cals": 11
     },
-    "sweetener": "Stevia"
+    "sweetener": "Stevia",
+    "image": "https://m.media-amazon.com/images/I/71lwAAOhPhL._SL1500_.jpg",
+    "rating": {
+      "stars": 3.8,
+      "count": 850
+    }
   },
   {
     "name": "TRUBAR",
-    "url": "https://www.truwomen.ca/collections/bars",
+    "url": "https://www.amazon.com/dp/B078WDTY8N",
     "data": {
       "unit_price": 3.08,
       "calories": 190,
-      "protein": 12.0,
-      "sugar": 7.0,
-      "net_carbs": 13.0
+      "protein": 12,
+      "sugar": 7,
+      "net_carbs": 13
     },
     "ranks": {
       "price_per_100cal": 89,
@@ -1302,17 +1643,22 @@
       "sugar_cals": 49,
       "carbs_cals": 42
     },
-    "sweetener": "Cane Sugar"
+    "sweetener": "Cane Sugar",
+    "image": "https://m.media-amazon.com/images/I/717yLwCH+YL._SL1500_.jpg",
+    "rating": {
+      "stars": 4.3,
+      "count": 808
+    }
   },
   {
     "name": "Zing Keto",
-    "url": "https://zingbars.com/collections/keto",
+    "url": "https://www.amazon.com/dp/B08KZ83W37",
     "data": {
       "unit_price": 3.33,
       "calories": 200,
-      "protein": 8.0,
-      "sugar": 1.0,
-      "net_carbs": 6.0
+      "protein": 8,
+      "sugar": 1,
+      "net_carbs": 6
     },
     "ranks": {
       "price_per_100cal": 90,
@@ -1321,17 +1667,22 @@
       "sugar_cals": 6,
       "carbs_cals": 16
     },
-    "sweetener": "Tapioca Syrup"
+    "sweetener": "Tapioca Syrup, Glycerin, Monk Fruit",
+    "image": "https://m.media-amazon.com/images/I/81CN3EqdEHL._AC_SL1500_.jpg",
+    "rating": {
+      "stars": 3.7,
+      "count": 166
+    }
   },
   {
     "name": "Outright Plant-Based",
-    "url": "https://outrightbar.com/products/plant-based-bars?variant=32320123961389",
+    "url": "https://outrightbar.com/products/plant-based-bars",
     "data": {
       "unit_price": 2.5,
       "calories": 300,
-      "protein": 17.0,
-      "sugar": 15.0,
-      "net_carbs": 21.0
+      "protein": 17,
+      "sugar": 15,
+      "net_carbs": 21
     },
     "ranks": {
       "price_per_100cal": 14,
@@ -1340,17 +1691,19 @@
       "sugar_cals": 70,
       "carbs_cals": 43
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://outrightbar.com/cdn/shop/products/Outright-PlantBasedBar-ChocolateChip-Front_300x.jpg",
+    "rating": null
   },
   {
     "name": "Love Good Fats Truffle (some flavors)",
-    "url": "https://lovegoodfats.com/collections/truffle-bars",
+    "url": "https://www.amazon.com/dp/B07F58G4F4",
     "data": {
       "unit_price": 2.21,
       "calories": 190,
-      "protein": 7.0,
-      "sugar": 2.0,
-      "net_carbs": 5.0
+      "protein": 7,
+      "sugar": 2,
+      "net_carbs": 5
     },
     "ranks": {
       "price_per_100cal": 54,
@@ -1359,17 +1712,22 @@
       "sugar_cals": 19,
       "carbs_cals": 13
     },
-    "sweetener": "Cane Sugar"
+    "sweetener": "Cane Sugar, Stevia",
+    "image": "https://m.media-amazon.com/images/I/61ScLcZlzAL._SL1120_.jpg",
+    "rating": {
+      "stars": 4.1,
+      "count": 562
+    }
   },
   {
     "name": "R.E.D.D.",
-    "url": "https://www.amazon.com/dp/B01MYU5KNF/ref=sspa_dk_detail_4?psc=1&pf_rd_p=999c0877-3704-4f0f-9726-eebf80846a35&pf_rd_r=WRMFF07SXPVTWX7Z28N4&pd_rd_wg=UdOND&pd_rd_w=C53oc&content-id=amzn1.sym.999c0877-3704-4f0f-9726-eebf80846a35&pd_rd_r=593137fa-77dd-4729-b196-05cd7e466bed&s=grocery&sp_csd=d2lkZ2V0TmFtZT1zcF9kZXRhaWw&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEzS0dKMFRYVUNDSEY5JmVuY3J5cHRlZElkPUEwMTkxNjc4OFlNOTRRWkhITDgxJmVuY3J5cHRlZEFkSWQ9QTAxNDEzODEyU1I1SklXQTZCVjNEJndpZGdldE5hbWU9c3BfZGV0YWlsJmFjdGlvbj1jbGlja1JlZGlyZWN0JmRvTm90TG9nQ2xpY2s9dHJ1ZQ==",
+    "url": "https://www.amazon.com/dp/B01MYU5KNF",
     "data": {
       "unit_price": 2.67,
       "calories": 220,
-      "protein": 10.0,
-      "sugar": 2.0,
-      "net_carbs": 11.0
+      "protein": 10,
+      "sugar": 2,
+      "net_carbs": 11
     },
     "ranks": {
       "price_per_100cal": 63,
@@ -1378,17 +1736,22 @@
       "sugar_cals": 18,
       "carbs_cals": 30
     },
-    "sweetener": "Dates"
+    "sweetener": "Dates, Glycerin, Monk Fruit",
+    "image": "https://m.media-amazon.com/images/I/71EYJ0KhsTL._SL1500_.jpg",
+    "rating": {
+      "stars": 4.1,
+      "count": 270
+    }
   },
   {
     "name": "Mindright Superfood",
-    "url": "https://www.amazon.com/Mindright-Superfood-Ashwagandha-Cordyceps-Ginseng/dp/B08V7GBTWG/ref=sr_1_26?crid=121SJN5KOBVHU&keywords=vegan+protein+bar&qid=1659651447&s=grocery&sprefix=vegan+protein+ba%2Cgrocery%2C109&sr=1-26",
+    "url": "https://www.amazon.com/dp/B08V7GBTWG",
     "data": {
       "unit_price": 2.25,
       "calories": 210,
-      "protein": 11.0,
-      "sugar": 7.0,
-      "net_carbs": 15.0
+      "protein": 11,
+      "sugar": 7,
+      "net_carbs": 15
     },
     "ranks": {
       "price_per_100cal": 38,
@@ -1397,17 +1760,22 @@
       "sugar_cals": 47,
       "carbs_cals": 44
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://m.media-amazon.com/images/I/81NJ0lOFkZL._SL1500_.jpg",
+    "rating": {
+      "stars": 4.3,
+      "count": 275
+    }
   },
   {
     "name": "Rise (some flavors)",
-    "url": "https://risebar.com/collections/all-bars/protein",
+    "url": "https://www.amazon.com/dp/B00HFY0YSW",
     "data": {
       "unit_price": 2.33,
       "calories": 260,
-      "protein": 15.0,
-      "sugar": 12.0,
-      "net_carbs": 22.0
+      "protein": 15,
+      "sugar": 12,
+      "net_carbs": 22
     },
     "ranks": {
       "price_per_100cal": 18,
@@ -1416,17 +1784,22 @@
       "sugar_cals": 60,
       "carbs_cals": 57
     },
-    "sweetener": "Coconut Nectar"
+    "sweetener": "Coconut Nectar",
+    "image": "https://m.media-amazon.com/images/I/71o5AlyYHVL._SL1500_.jpg",
+    "rating": {
+      "stars": 3.8,
+      "count": 623
+    }
   },
   {
     "name": "Good Cravings ",
-    "url": "https://www.good-cravings.com/",
+    "url": "https://www.amazon.com/dp/B07MHWXJCB",
     "data": {
       "unit_price": 3.42,
       "calories": 190,
-      "protein": 16.0,
-      "sugar": 12.0,
-      "net_carbs": 15.0
+      "protein": 16,
+      "sugar": 12,
+      "net_carbs": 15
     },
     "ranks": {
       "price_per_100cal": 93,
@@ -1435,7 +1808,12 @@
       "sugar_cals": 86,
       "carbs_cals": 50
     },
-    "sweetener": "Dates"
+    "sweetener": "Dates",
+    "image": "https://m.media-amazon.com/images/I/812WJdj5OfL._SL1500_.jpg",
+    "rating": {
+      "stars": 5,
+      "count": 3
+    }
   },
   {
     "name": "Plenny",
@@ -1443,9 +1821,9 @@
     "data": {
       "unit_price": 3.99,
       "calories": 400,
-      "protein": 20.0,
+      "protein": 20,
       "sugar": 6.5,
-      "net_carbs": 33.0
+      "net_carbs": 33
     },
     "ranks": {
       "price_per_100cal": 34,
@@ -1454,17 +1832,19 @@
       "sugar_cals": 29,
       "carbs_cals": 56
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://us.jimmyjoy.com/cdn/shop/products/PB_Caramel_Seasalt_1024x1024.png?v=1740051042",
+    "rating": null
   },
   {
     "name": "PROBAR Protein",
-    "url": "https://theprobar.com/collections/probar-protein",
+    "url": "https://www.amazon.com/dp/B00B97A4C2",
     "data": {
       "unit_price": 2.92,
       "calories": 290,
-      "protein": 20.0,
-      "sugar": 14.0,
-      "net_carbs": 29.0
+      "protein": 20,
+      "sugar": 14,
+      "net_carbs": 29
     },
     "ranks": {
       "price_per_100cal": 35,
@@ -1473,17 +1853,22 @@
       "sugar_cals": 68,
       "carbs_cals": 72
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://m.media-amazon.com/images/I/61Q5wDQFbmL._SL1500_.jpg",
+    "rating": {
+      "stars": 4.1,
+      "count": 479
+    }
   },
   {
     "name": "Munk Pack Nut & Seed",
-    "url": "https://store.munkpack.com/collections/keto-nut-seed-bars",
+    "url": "https://www.amazon.com/dp/B07YSVJP5J",
     "data": {
       "unit_price": 2.08,
       "calories": 150,
-      "protein": 5.0,
-      "sugar": 1.0,
-      "net_carbs": 3.0
+      "protein": 5,
+      "sugar": 1,
+      "net_carbs": 3
     },
     "ranks": {
       "price_per_100cal": 78,
@@ -1492,17 +1877,22 @@
       "sugar_cals": 14,
       "carbs_cals": 8
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://m.media-amazon.com/images/I/71Iu5UImrCL._SL1500_.jpg",
+    "rating": {
+      "stars": 4.6,
+      "count": 906
+    }
   },
   {
-    "name": "N\u00e4nosupps Protein Brownie (UK, EU, etc)",
-    "url": "https://www.nanosupps.com/brownie/",
+    "name": "Nänosupps Protein Brownie (UK, EU, etc)",
+    "url": "https://www.nutriland.ro/en/products/protein-brownie-60g-nanosupps-prajitura-proteica",
     "data": {
       "unit_price": 2.22,
       "calories": 232,
-      "protein": 15.0,
-      "sugar": 11.0,
-      "net_carbs": 23.0
+      "protein": 15,
+      "sugar": 11,
+      "net_carbs": 23
     },
     "ranks": {
       "price_per_100cal": 25,
@@ -1511,17 +1901,19 @@
       "sugar_cals": 63,
       "carbs_cals": 71
     },
-    "sweetener": "Sugar"
+    "sweetener": "Sugar, Oat Syrup, Brown Sugar, Date Paste",
+    "image": "https://www.nutriland.ro/cdn/shop/products/alte-alimenteprotein-brownie-60g-nanosupps-prajitura-proteica-898151.jpg?v=1710413650",
+    "rating": null
   },
   {
     "name": "Square Organics",
-    "url": "https://www.wholefoodsmarket.com/products/brands/square-organics",
+    "url": "https://www.amazon.com/dp/B00AFNZRDM",
     "data": {
       "unit_price": 1.8,
       "calories": 230,
-      "protein": 13.0,
-      "sugar": 12.0,
-      "net_carbs": 18.0
+      "protein": 13,
+      "sugar": 12,
+      "net_carbs": 18
     },
     "ranks": {
       "price_per_100cal": 11,
@@ -1530,26 +1922,12 @@
       "sugar_cals": 73,
       "carbs_cals": 49
     },
-    "sweetener": ""
-  },
-  {
-    "name": "Wild Protein Plant Based",
-    "url": "https://thewildprotein.com/collections/wild-vegan",
-    "data": {
-      "unit_price": 1.78,
-      "calories": 150,
-      "protein": 14.0,
-      "sugar": 9.0,
-      "net_carbs": 15.0
-    },
-    "ranks": {
-      "price_per_100cal": 60,
-      "protein_cals": 6,
-      "price_per_protein": 89,
-      "sugar_cals": 82,
-      "carbs_cals": 72
-    },
-    "sweetener": "Maltitol"
+    "sweetener": "",
+    "image": "https://m.media-amazon.com/images/I/61GP7ls6S9S._SL1000_.jpg",
+    "rating": {
+      "stars": 4.3,
+      "count": 139
+    }
   },
   {
     "name": "keto keto (UK)",
@@ -1568,17 +1946,22 @@
       "sugar_cals": 4,
       "carbs_cals": 21
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://ketoketo.co/cdn/shop/files/mix-box_2000x2000.png?v=1706186524",
+    "rating": {
+      "stars": 3.9,
+      "count": 295
+    }
   },
   {
     "name": "YoFiit Vegan Protein Breakfast",
-    "url": "https://www.amazon.com/YoFiit-Vegan-Protein-Breakfast-Bars/dp/B076B2978P/ref=sr_1_14_sspa?crid=1PSN3Y2V4MEOM&keywords=vegan+protein+bars&qid=1659651120&s=grocery&sprefix=vegan+protein+bars%2Cgrocery%2C96&sr=1-14-spons&psc=1&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUFCNU4zNVZROVVQSEMmZW5jcnlwdGVkSWQ9QTAzMzc1NzExUkg1VzVOOFBTMkdWJmVuY3J5cHRlZEFkSWQ9QTA0MTM2NTMzMUlOSkNaQlpGVVNTJndpZGdldE5hbWU9c3BfbXRmJmFjdGlvbj1jbGlja1JlZGlyZWN0JmRvTm90TG9nQ2xpY2s9dHJ1ZQ==",
+    "url": "https://www.amazon.com/YoFiit-Vegan-Protein-Breakfast-Bars/dp/B076B2978P",
     "data": {
       "unit_price": 2.91,
       "calories": 200,
-      "protein": 10.0,
-      "sugar": 4.0,
-      "net_carbs": 12.0
+      "protein": 10,
+      "sugar": 4,
+      "net_carbs": 12
     },
     "ranks": {
       "price_per_100cal": 83,
@@ -1587,7 +1970,11 @@
       "sugar_cals": 31,
       "carbs_cals": 37
     },
-    "sweetener": ""
+    "sweetener": "",
+    "rating": {
+      "stars": 3.5,
+      "count": 140
+    }
   },
   {
     "name": "Huel",
@@ -1595,9 +1982,9 @@
     "data": {
       "unit_price": 2.35,
       "calories": 200,
-      "protein": 12.0,
-      "sugar": 8.0,
-      "net_carbs": 18.0
+      "protein": 12,
+      "sugar": 8,
+      "net_carbs": 18
     },
     "ranks": {
       "price_per_100cal": 58,
@@ -1606,7 +1993,9 @@
       "sugar_cals": 53,
       "carbs_cals": 63
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://cdn.sanity.io/images/sy0wkh9n/productionv29/c881e516df49c9cd5509278302d7d8d8ac0d49cb-1400x1400.jpg?auto=format&fit=max&q=75&w=500",
+    "rating": null
   },
   {
     "name": "Tribe Triple Decker (UK)",
@@ -1614,7 +2003,7 @@
     "data": {
       "unit_price": 2.85,
       "calories": 228,
-      "protein": 10.0,
+      "protein": 10,
       "sugar": 6.9,
       "net_carbs": 7.8
     },
@@ -1625,7 +2014,12 @@
       "sugar_cals": 46,
       "carbs_cals": 20
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://wearetribe.co/cdn/shop/files/1_bc6cd147-aaf5-4565-9f73-b75b4b943fe1.png",
+    "rating": {
+      "stars": 3.8,
+      "count": 38
+    }
   },
   {
     "name": "IMWELL",
@@ -1633,9 +2027,9 @@
     "data": {
       "unit_price": 1.54,
       "calories": 155,
-      "protein": 9.0,
-      "sugar": 4.0,
-      "net_carbs": 18.0
+      "protein": 9,
+      "sugar": 4,
+      "net_carbs": 18
     },
     "ranks": {
       "price_per_100cal": 32,
@@ -1644,17 +2038,21 @@
       "sugar_cals": 39,
       "carbs_cals": 85
     },
-    "sweetener": ""
+    "sweetener": "",
+    "rating": {
+      "stars": 4,
+      "count": 35
+    }
   },
   {
     "name": "KIND Nut",
-    "url": "https://www.kindsnacks.com/products/nut-bar",
+    "url": "https://www.kindsnacks.com/products/nut-bar/dark-chocolate-nuts-sea-salt",
     "data": {
       "unit_price": 1.29,
       "calories": 180,
-      "protein": 6.0,
-      "sugar": 5.0,
-      "net_carbs": 9.0
+      "protein": 6,
+      "sugar": 5,
+      "net_carbs": 9
     },
     "ranks": {
       "price_per_100cal": 9,
@@ -1663,17 +2061,22 @@
       "sugar_cals": 43,
       "carbs_cals": 30
     },
-    "sweetener": "Sugar"
+    "sweetener": "Sugar",
+    "image": "https://www.kindsnacks.com/sites/g/files/fnmzdf5536/files/migrate-product-files/puubvwlzlzvatzmggjur.png",
+    "rating": {
+      "stars": 4.6,
+      "count": 1570
+    }
   },
   {
     "name": "Munk Pack Keto Granola",
-    "url": "https://store.munkpack.com/collections/keto-granola-bars",
+    "url": "https://munkpack.com/products/sea-salt-dark-chocolate-keto-nut-seed-bar-12-pack",
     "data": {
       "unit_price": 2.08,
       "calories": 140,
-      "protein": 4.0,
-      "sugar": 1.0,
-      "net_carbs": 3.0
+      "protein": 4,
+      "sugar": 1,
+      "net_carbs": 3
     },
     "ranks": {
       "price_per_100cal": 84,
@@ -1682,17 +2085,22 @@
       "sugar_cals": 15,
       "carbs_cals": 10
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://munkpack.com/cdn/shop/files/NSB12pk_SSD.png?v=1737489876&width=800",
+    "rating": {
+      "stars": 4.2,
+      "count": 388
+    }
   },
   {
     "name": "Yummo's Dough Dreamer! Soft-Baked Protein Cookies (UK)",
-    "url": "https://eatyummos.com/products/dough-dreamer-soft-baked-protein-cookies",
+    "url": "https://www.dolphinfitness.co.uk/en/yummos-dough-dreamer-soft-baked-protein-cookies-12-x-50g/351621",
     "data": {
       "unit_price": 2.05,
       "calories": 168,
-      "protein": 10.0,
+      "protein": 10,
       "sugar": 1.8,
-      "net_carbs": 21.0
+      "net_carbs": 21
     },
     "ranks": {
       "price_per_100cal": 64,
@@ -1701,17 +2109,21 @@
       "sugar_cals": 22,
       "carbs_cals": 91
     },
-    "sweetener": "Maltitol"
+    "sweetener": "Maltitol, Glycerin, Dates",
+    "rating": {
+      "stars": 3.8,
+      "count": 74
+    }
   },
   {
     "name": "think! Vegan High Protein",
-    "url": "https://shop.thinkproducts.com/Vegan-High-Protein-Bars/c/ThinkProducts@Bars@Vegan",
+    "url": "https://www.thinkproducts.com/collections/plant-based/products/plant-based-high-protein-bar-sea-salt-almond-chocolate",
     "data": {
       "unit_price": 2.4,
       "calories": 190,
-      "protein": 13.0,
-      "sugar": 5.0,
-      "net_carbs": 23.0
+      "protein": 13,
+      "sugar": 5,
+      "net_carbs": 23
     },
     "ranks": {
       "price_per_100cal": 67,
@@ -1720,17 +2132,22 @@
       "sugar_cals": 41,
       "carbs_cals": 89
     },
-    "sweetener": "Maltitol"
+    "sweetener": "Maltitol, Glycerin, Stevia, Sugar",
+    "image": "https://www.thinkproducts.com/cdn/shop/files/tkp-714141-high-protein-bars-sea-salt-almond-chocolate-v_1.png",
+    "rating": {
+      "stars": 4.1,
+      "count": 212
+    }
   },
   {
     "name": "Zing Chocolate-Covered",
-    "url": "https://zingbars.com/collections/chocolate-covered-bars",
+    "url": "https://zingbars.com/products/dark-chocolate-peanut-butter",
     "data": {
       "unit_price": 2.5,
       "calories": 210,
-      "protein": 10.0,
-      "sugar": 5.0,
-      "net_carbs": 16.0
+      "protein": 10,
+      "sugar": 5,
+      "net_carbs": 16
     },
     "ranks": {
       "price_per_100cal": 61,
@@ -1739,17 +2156,22 @@
       "sugar_cals": 37,
       "carbs_cals": 48
     },
-    "sweetener": "Tapioca Syrup"
+    "sweetener": "Tapioca Syrup, Sugar, Allulose, Agave",
+    "image": "https://zingbars.com/cdn/shop/files/3D_DCPB_V6_copy.png",
+    "rating": {
+      "stars": 4.2,
+      "count": 33
+    }
   },
   {
     "name": "NuGo Dark",
-    "url": "https://www.nugonutrition.com/collections/dark",
+    "url": "https://nugo.com/products/nugo-dark-chocolate-cherry",
     "data": {
       "unit_price": 1.67,
       "calories": 200,
-      "protein": 12.0,
-      "sugar": 13.0,
-      "net_carbs": 20.0
+      "protein": 12,
+      "sugar": 13,
+      "net_carbs": 20
     },
     "ranks": {
       "price_per_100cal": 16,
@@ -1758,17 +2180,22 @@
       "sugar_cals": 90,
       "carbs_cals": 72
     },
-    "sweetener": "Cane Sugar"
+    "sweetener": "Cane Sugar, Tapioca Syrup, Agave Syrup",
+    "image": "https://nugo.com/cdn/shop/files/ChocolateCherry-min.png",
+    "rating": {
+      "stars": 4.5,
+      "count": 1318
+    }
   },
   {
     "name": "Functional Mushrooms",
-    "url": "https://www.amazon.com/Functional-Mushroom-Cordyceps-Certified-Gluten-Free/dp/B09HVC2Z3W/ref=sr_1_38?crid=121SJN5KOBVHU&keywords=vegan+protein+bar&qid=1659651928&s=grocery&sprefix=vegan+protein+ba%2Cgrocery%2C109&sr=1-38",
+    "url": "https://balancedtiger.com/products/functional-mushroom-vegan-protein-bars-sampler-pack",
     "data": {
-      "unit_price": 3.0,
+      "unit_price": 3,
       "calories": 190,
-      "protein": 11.0,
-      "sugar": 5.0,
-      "net_carbs": 18.0
+      "protein": 11,
+      "sugar": 5,
+      "net_carbs": 18
     },
     "ranks": {
       "price_per_100cal": 86,
@@ -1777,17 +2204,22 @@
       "sugar_cals": 41,
       "carbs_cals": 70
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://balancedtiger.com/cdn/shop/files/img_8656_4_81ff487e-b300-470c-b783-48696c4a6e44_3000x2001.jpg?v=1651930287",
+    "rating": {
+      "stars": 4.2,
+      "count": 460
+    }
   },
   {
     "name": "Munk Pack Protein Cookie",
-    "url": "https://store.munkpack.com/collections/protein-cookies",
+    "url": "https://www.amazon.com/Munk-Pack-Protein-Cookie-Chocolate/dp/B08CQDMCCY",
     "data": {
-      "unit_price": 2.0,
+      "unit_price": 2,
       "calories": 320,
-      "protein": 16.0,
-      "sugar": 16.0,
-      "net_carbs": 29.0
+      "protein": 16,
+      "sugar": 16,
+      "net_carbs": 29
     },
     "ranks": {
       "price_per_100cal": 5,
@@ -1796,7 +2228,11 @@
       "sugar_cals": 70,
       "carbs_cals": 67
     },
-    "sweetener": ""
+    "sweetener": "",
+    "rating": {
+      "stars": 4.6,
+      "count": 501
+    }
   },
   {
     "name": "nakd (UK)",
@@ -1815,17 +2251,22 @@
       "sugar_cals": 84,
       "carbs_cals": 28
     },
-    "sweetener": "Dates"
+    "sweetener": "Dates",
+    "image": "https://images.hollandandbarrettimages.co.uk/productimages/HB/1500/064782_A.png",
+    "rating": {
+      "stars": 4.5,
+      "count": 799
+    }
   },
   {
     "name": "Zing Nekkid",
-    "url": "https://zingbars.com/pages/shop?category=nekkid",
+    "url": "https://zingbars.com/products/12-bars-of-peanut-butter-chocolate-chip",
     "data": {
       "unit_price": 2.5,
       "calories": 210,
-      "protein": 10.0,
-      "sugar": 6.0,
-      "net_carbs": 17.0
+      "protein": 10,
+      "sugar": 6,
+      "net_carbs": 17
     },
     "ranks": {
       "price_per_100cal": 61,
@@ -1834,17 +2275,19 @@
       "sugar_cals": 44,
       "carbs_cals": 54
     },
-    "sweetener": "Tapioca Syrup"
+    "sweetener": "Tapioca Syrup, Cane Sugar, Agave, Brown Rice Syrup",
+    "image": "https://zingbars.com/cdn/shop/files/PBCC4.0.png?v=1780422445",
+    "rating": null
   },
   {
     "name": "Mid-Day Squares",
-    "url": "https://www.middaysquares.com/pages/12-pack-page",
+    "url": "https://www.amazon.com/Mid-Day-Squares-Protein-Chocolate-Certified/dp/B08HYCYTCK",
     "data": {
       "unit_price": 2.46,
       "calories": 170,
-      "protein": 6.0,
-      "sugar": 4.0,
-      "net_carbs": 8.0
+      "protein": 6,
+      "sugar": 4,
+      "net_carbs": 8
     },
     "ranks": {
       "price_per_100cal": 82,
@@ -1853,17 +2296,22 @@
       "sugar_cals": 36,
       "carbs_cals": 29
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://www.middaysquares.com/cdn/shop/files/12_pack_grape_ca.png?v=1775027639",
+    "rating": {
+      "stars": 4.4,
+      "count": 376
+    }
   },
   {
     "name": "The GFB",
-    "url": "https://theglutenfreebar.com/collections/the-gfb-gluten-free-bars",
+    "url": "https://www.amazon.com/Gluten-Free-Non-GMO-Protein-Peanut/dp/B008NU516M",
     "data": {
       "unit_price": 2.04,
       "calories": 250,
-      "protein": 12.0,
-      "sugar": 12.0,
-      "net_carbs": 25.0
+      "protein": 12,
+      "sugar": 12,
+      "net_carbs": 25
     },
     "ranks": {
       "price_per_100cal": 13,
@@ -1872,7 +2320,12 @@
       "sugar_cals": 66,
       "carbs_cals": 72
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://theglutenfreebar.com/cdn/shop/files/cta_bar_hero_1024x1024.jpg?v=1738582168",
+    "rating": {
+      "stars": 4.4,
+      "count": 150
+    }
   },
   {
     "name": "Vega Protein Snack",
@@ -1880,9 +2333,9 @@
     "data": {
       "unit_price": 2.17,
       "calories": 190,
-      "protein": 10.0,
-      "sugar": 11.0,
-      "net_carbs": 17.0
+      "protein": 10,
+      "sugar": 11,
+      "net_carbs": 17
     },
     "ranks": {
       "price_per_100cal": 50,
@@ -1891,17 +2344,21 @@
       "sugar_cals": 78,
       "carbs_cals": 62
     },
-    "sweetener": ""
+    "sweetener": "",
+    "rating": {
+      "stars": 4.2,
+      "count": 81
+    }
   },
   {
     "name": "Cave Man",
-    "url": "https://www.cavemanfoods.com/collections/nutrition-bars",
+    "url": "https://www.amazon.com/Caveman-Foods-Paleo-Friendly-Protein-Salted/dp/B07C1FCZX9",
     "data": {
       "unit_price": 1.67,
       "calories": 180,
-      "protein": 5.0,
-      "sugar": 8.0,
-      "net_carbs": 9.0
+      "protein": 5,
+      "sugar": 8,
+      "net_carbs": 9
     },
     "ranks": {
       "price_per_100cal": 22,
@@ -1910,17 +2367,22 @@
       "sugar_cals": 58,
       "carbs_cals": 30
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://img1.wsimg.com/isteam/ip/63de3d9f-5ee2-4103-bad4-f25d4add3f49/Caveman-bars.png/:/rs=w:1240,h:620,cg:true,m/cr=w:1240,h:620",
+    "rating": {
+      "stars": 4.3,
+      "count": 16
+    }
   },
   {
     "name": "Quantum Energy Square",
-    "url": "https://www.amazon.com/QUANTUM-Energy-Organic-Caffeinated-Breakfast/dp/B07HHK51J9/ref=sr_1_50?crid=121SJN5KOBVHU&keywords=vegan+protein+bar&qid=1659652294&s=grocery&sprefix=vegan+protein+ba%2Cgrocery%2C109&sr=1-50",
+    "url": "https://www.amazon.com/QUANTUM-Energy-Square-Gluten-Free-Dairy-Free/dp/B07HHK51J9",
     "data": {
       "unit_price": 2.25,
       "calories": 200,
-      "protein": 10.0,
-      "sugar": 11.0,
-      "net_carbs": 17.0
+      "protein": 10,
+      "sugar": 11,
+      "net_carbs": 17
     },
     "ranks": {
       "price_per_100cal": 47,
@@ -1929,17 +2391,22 @@
       "sugar_cals": 74,
       "carbs_cals": 58
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://cdn.shopify.com/s/files/1/1515/2714/files/quantum_variety_8pk.png?v=1779318141",
+    "rating": {
+      "stars": 4.1,
+      "count": 1034
+    }
   },
   {
     "name": "Fast Bar",
-    "url": "https://www.amazon.com/dp/B08KPNNRW4/ref=sspa_dk_detail_4?psc=1&pf_rd_p=3481f441-61ac-4028-9c1a-7f9ce8ec50c5&pf_rd_r=25655XFHFNEJT4M5H80E&pd_rd_wg=OJBlR&pd_rd_w=W0N6f&content-id=amzn1.sym.3481f441-61ac-4028-9c1a-7f9ce8ec50c5&pd_rd_r=82712786-8e11-4002-91b4-b6243aca1f4a&s=grocery&sp_csd=d2lkZ2V0TmFtZT1zcF9kZXRhaWxfdGhlbWF0aWM&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEyUlRONEoxOTJDQlI4JmVuY3J5cHRlZElkPUEwMTU1MzI3MUNJQU9LUEFLVU0zSCZlbmNyeXB0ZWRBZElkPUEwNDQ5OTM0MjlSSkdLUEhVUkNZWiZ3aWRnZXROYW1lPXNwX2RldGFpbF90aGVtYXRpYyZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU=",
+    "url": "https://www.amazon.com/dp/B08KPNNRW4",
     "data": {
       "unit_price": 2.87,
       "calories": 200,
-      "protein": 5.0,
-      "sugar": 5.0,
-      "net_carbs": 6.0
+      "protein": 5,
+      "sugar": 5,
+      "net_carbs": 6
     },
     "ranks": {
       "price_per_100cal": 81,
@@ -1948,15 +2415,19 @@
       "sugar_cals": 38,
       "carbs_cals": 16
     },
-    "sweetener": ""
+    "sweetener": "",
+    "rating": {
+      "stars": 4.1,
+      "count": 1021
+    }
   },
   {
     "name": "Trek Protein Flapjack (UK)",
-    "url": "https://eattrek.com/products/protein-flapjacks/",
+    "url": "https://www.hollandandbarrett.com/shop/product/trek-cocoa-oat-flapjack-6100156292",
     "data": {
       "unit_price": 1.29,
       "calories": 242,
-      "protein": 9.0,
+      "protein": 9,
       "sugar": 11.6,
       "net_carbs": 21.5
     },
@@ -1967,17 +2438,21 @@
       "sugar_cals": 65,
       "carbs_cals": 61
     },
-    "sweetener": "Sugar"
+    "sweetener": "Sugar, Rice syrup, Sucrose",
+    "rating": {
+      "stars": 4.6,
+      "count": 1990
+    }
   },
   {
     "name": "Whole Earth & Sea Vegan Greens",
-    "url": "https://www.nhc.com/whole-earth-sea-organic-vegan-greens-bar-by-natural-factors?quantity=1&custcol_nhc_size=1990",
+    "url": "https://www.professionalsupplementcenter.com/whole-earth-sea-organic-vegan-greens-bar-by-natural-factors",
     "data": {
       "unit_price": 2.79,
       "calories": 280,
-      "protein": 15.0,
-      "sugar": 22.0,
-      "net_carbs": 28.0
+      "protein": 15,
+      "sugar": 22,
+      "net_carbs": 28
     },
     "ranks": {
       "price_per_100cal": 33,
@@ -1986,7 +2461,12 @@
       "sugar_cals": 93,
       "carbs_cals": 72
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://www.professionalsupplementcenter.com/cdn/shop/files/whole-earth-sea-organic-vegan-greens-bar-NF_main_1.jpg?v=1768936141&width=800",
+    "rating": {
+      "stars": 4.2,
+      "count": 140
+    }
   },
   {
     "name": "Grab the Gold",
@@ -1994,9 +2474,9 @@
     "data": {
       "unit_price": 2.49,
       "calories": 193,
-      "protein": 11.0,
-      "sugar": 12.0,
-      "net_carbs": 18.0
+      "protein": 11,
+      "sugar": 12,
+      "net_carbs": 18
     },
     "ranks": {
       "price_per_100cal": 69,
@@ -2005,11 +2485,16 @@
       "sugar_cals": 85,
       "carbs_cals": 69
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://grabthegold.com/wp-content/uploads/2024/10/Grab-The-Gold-POS-CPB-Front-Open-Rendered-09.19_CROPPED-1024x1024.webp",
+    "rating": {
+      "stars": 4.7,
+      "count": 801
+    }
   },
   {
     "name": "Vive (UK)",
-    "url": "https://eatvive.com/products/",
+    "url": "https://eatvive.com/products/dark-chocolate-protein-bars",
     "data": {
       "unit_price": 1.87,
       "calories": 172,
@@ -2024,17 +2509,22 @@
       "sugar_cals": 76,
       "carbs_cals": 27
     },
-    "sweetener": "Glucose Syrup"
+    "sweetener": "Glucose Syrup, Sugar, Coconut Sugar, Rice Syrup",
+    "image": "https://eatvive.com/cdn/shop/files/NPB_774f5980-338d-483c-b743-356b5663dffa.jpg?v=1739454024&width=1080",
+    "rating": {
+      "stars": 4.2,
+      "count": 29
+    }
   },
   {
     "name": "NuGo Protein Cookie",
-    "url": "https://www.nugonutrition.com/collections/protein-cookie",
+    "url": "https://www.amazon.com/NuGo-Gluten-Protein-Cookie-Chocolate/dp/B076QD6VMG",
     "data": {
       "unit_price": 2.42,
       "calories": 400,
-      "protein": 16.0,
-      "sugar": 23.0,
-      "net_carbs": 36.0
+      "protein": 16,
+      "sugar": 23,
+      "net_carbs": 36
     },
     "ranks": {
       "price_per_100cal": 4,
@@ -2043,11 +2533,15 @@
       "sugar_cals": 77,
       "carbs_cals": 63
     },
-    "sweetener": "Cane Sugar"
+    "sweetener": "Cane Sugar, Brown Sugar",
+    "rating": {
+      "stars": 4,
+      "count": 128
+    }
   },
   {
     "name": "Tribe Protein Flapjack (UK)",
-    "url": "https://wearetribe.co/shop/products/protein-flapjack",
+    "url": "https://wearetribe.co/products/protein-flapjack",
     "data": {
       "unit_price": 2.41,
       "calories": 195,
@@ -2062,11 +2556,16 @@
       "sugar_cals": 62,
       "carbs_cals": 38
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://wearetribe.co/cdn/shop/files/UK-First_Protein_1.png?v=1741172808&width=1500",
+    "rating": {
+      "stars": 4.2,
+      "count": 29
+    }
   },
   {
     "name": "Trek Protein Energy (UK)",
-    "url": "https://eattrek.com/products/protein-energy-bars/",
+    "url": "https://www.hollandandbarrett.com/shop/product/trek-peanut-power-60020458",
     "data": {
       "unit_price": 1.31,
       "calories": 206,
@@ -2081,17 +2580,21 @@
       "sugar_cals": 96,
       "carbs_cals": 84
     },
-    "sweetener": "Raisins"
+    "sweetener": "Raisins, Fruit juice concentrate",
+    "rating": {
+      "stars": 4.2,
+      "count": 73
+    }
   },
   {
     "name": "NuGo Organic",
-    "url": "https://www.nugonutrition.com/collections/nugo-organic",
+    "url": "https://www.amazon.com/NuGo-Organic-Nutrition-Chocolate-1-76-Ounce/dp/B000EXS6D6",
     "data": {
       "unit_price": 1.83,
       "calories": 190,
-      "protein": 10.0,
-      "sugar": 12.0,
-      "net_carbs": 23.0
+      "protein": 10,
+      "sugar": 12,
+      "net_carbs": 23
     },
     "ranks": {
       "price_per_100cal": 27,
@@ -2100,17 +2603,22 @@
       "sugar_cals": 86,
       "carbs_cals": 89
     },
-    "sweetener": "Cane Sugar"
+    "sweetener": "Cane Sugar, Tapioca Syrup, Agave Syrup",
+    "image": "https://nugo.com/cdn/shop/products/DoubleDarkChocolate-min.png?v=1777556813&width=1024",
+    "rating": {
+      "stars": 4,
+      "count": 280
+    }
   },
   {
     "name": "NuGo Free",
-    "url": "https://www.nugonutrition.com/collections/free",
+    "url": "https://www.amazon.com/NuGo-Gluten-Chocolate-Crunch-1-59-Ounce/dp/B001LQY882",
     "data": {
       "unit_price": 1.67,
       "calories": 170,
-      "protein": 9.0,
-      "sugar": 10.0,
-      "net_carbs": 23.0
+      "protein": 9,
+      "sugar": 10,
+      "net_carbs": 23
     },
     "ranks": {
       "price_per_100cal": 30,
@@ -2119,17 +2627,21 @@
       "sugar_cals": 79,
       "carbs_cals": 95
     },
-    "sweetener": "Cane Sugar"
+    "sweetener": "Cane Sugar, Tapioca Syrup, Agave Syrup, Brown Rice Syrup, Date Paste",
+    "rating": {
+      "stars": 3.8,
+      "count": 422
+    }
   },
   {
     "name": "Clif Nut Butter",
-    "url": "https://shop.clifbar.com/collections/clif-nut-butter-bar",
+    "url": "https://www.clifbar.com/products/clif-nut-butter-bar-peanut-butter",
     "data": {
       "unit_price": 1.64,
       "calories": 230,
-      "protein": 7.0,
-      "sugar": 9.0,
-      "net_carbs": 23.0
+      "protein": 7,
+      "sugar": 9,
+      "net_carbs": 23
     },
     "ranks": {
       "price_per_100cal": 8,
@@ -2138,17 +2650,22 @@
       "sugar_cals": 52,
       "carbs_cals": 72
     },
-    "sweetener": "Brown Rice Syrup"
+    "sweetener": "Brown Rice Syrup, Cane Syrup, Date Paste, Tapioca Syrup, Cane Sugar, Glycerin",
+    "image": "https://cdn.shopify.com/s/files/1/0341/0637/6325/files/NBB_PB_wrapper_ac87dee1-b70c-495c-a678-600b95bdec45.png?v=1769569830",
+    "rating": {
+      "stars": 4.5,
+      "count": 543
+    }
   },
   {
     "name": "Core Bar",
-    "url": "https://www.corefoods.com/collections/corebars",
+    "url": "https://www.amazon.com/CORE-Organic-Plant-Based-Probiotic-Immunity/dp/B07PNPVSHK",
     "data": {
-      "unit_price": 3.0,
+      "unit_price": 3,
       "calories": 220,
-      "protein": 10.0,
-      "sugar": 9.0,
-      "net_carbs": 22.0
+      "protein": 10,
+      "sugar": 9,
+      "net_carbs": 22
     },
     "ranks": {
       "price_per_100cal": 76,
@@ -2157,17 +2674,22 @@
       "sugar_cals": 54,
       "carbs_cals": 72
     },
-    "sweetener": "Dates"
+    "sweetener": "Dates",
+    "image": "https://m.media-amazon.com/images/I/61-yxRso-4L._SL1071_.jpg",
+    "rating": {
+      "stars": 4.3,
+      "count": 41
+    }
   },
   {
     "name": "Freakin' Wholesome Protein Balls",
-    "url": "https://freakinwholesome.com/protein-balls/",
+    "url": "https://www.amazon.com/Freakin-Wholesome-Chocolate-Covered-Protein/dp/B08QJ1QMKF",
     "data": {
       "unit_price": 4.66,
       "calories": 345,
-      "protein": 9.0,
-      "sugar": 15.0,
-      "net_carbs": 18.0
+      "protein": 9,
+      "sugar": 15,
+      "net_carbs": 18
     },
     "ranks": {
       "price_per_100cal": 75,
@@ -2176,7 +2698,12 @@
       "sugar_cals": 57,
       "carbs_cals": 33
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://m.media-amazon.com/images/I/71ZVxXoSneL._SL1500_.jpg",
+    "rating": {
+      "stars": 3.1,
+      "count": 10
+    }
   },
   {
     "name": "Tribe Protein Energy (UK)",
@@ -2184,7 +2711,7 @@
     "data": {
       "unit_price": 2.63,
       "calories": 199,
-      "protein": 7.0,
+      "protein": 7,
       "sugar": 8.5,
       "net_carbs": 16.1
     },
@@ -2195,17 +2722,22 @@
       "sugar_cals": 55,
       "carbs_cals": 53
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://wearetribe.co/cdn/shop/files/8_2ce70c21-31dc-4460-b387-1ba70ae1296c.jpg?v=1775143937&width=1080",
+    "rating": {
+      "stars": 3.7,
+      "count": 6
+    }
   },
   {
     "name": "Evolve",
-    "url": "https://www.amazon.com/Evolve-Plant-Based-Protein-Almond-Cherry/dp/B0106YSBKU/ref=sr_1_53?crid=121SJN5KOBVHU&keywords=vegan+protein+bar&qid=1659652294&s=grocery&sprefix=vegan+protein+ba%2Cgrocery%2C109&sr=1-53",
+    "url": "https://www.amazon.com/Evolve-Plant-Based-Protein-Almond-Cherry/dp/B0106YSBKU/",
     "data": {
       "unit_price": 1.67,
       "calories": 220,
-      "protein": 10.0,
-      "sugar": 14.0,
-      "net_carbs": 25.0
+      "protein": 10,
+      "sugar": 14,
+      "net_carbs": 25
     },
     "ranks": {
       "price_per_100cal": 10,
@@ -2214,36 +2746,22 @@
       "sugar_cals": 88,
       "carbs_cals": 83
     },
-    "sweetener": ""
-  },
-  {
-    "name": "RXBAR Plant",
-    "url": "https://shop.rxbar.com/shop/protein-bars/plant-bars.html",
-    "data": {
-      "unit_price": 2.33,
-      "calories": 210,
-      "protein": 10.0,
-      "sugar": 17.0,
-      "net_carbs": 21.0
-    },
-    "ranks": {
-      "price_per_100cal": 45,
-      "protein_cals": 57,
-      "price_per_protein": 39,
-      "sugar_cals": 94,
-      "carbs_cals": 72
-    },
-    "sweetener": "Dates"
+    "sweetener": "",
+    "image": "https://m.media-amazon.com/images/I/81rL4kf-iAS._AC_SL1500_.jpg",
+    "rating": {
+      "stars": 4.3,
+      "count": 206
+    }
   },
   {
     "name": "Lenny and Larry's The Complete Cookie",
-    "url": "https://www.lennylarry.com/collections/the-complete-cookie",
+    "url": "https://www.amazon.com/Lenny-Larrys-Complete-Chocolate-Protein/dp/B004IJM4OY",
     "data": {
       "unit_price": 2.08,
       "calories": 420,
-      "protein": 16.0,
-      "sugar": 25.0,
-      "net_carbs": 49.0
+      "protein": 16,
+      "sugar": 25,
+      "net_carbs": 49
     },
     "ranks": {
       "price_per_100cal": 2,
@@ -2252,17 +2770,22 @@
       "sugar_cals": 81,
       "carbs_cals": 86
     },
-    "sweetener": "Cane Sugar"
+    "sweetener": "Cane Sugar, Sugar, Molasses",
+    "image": "https://m.media-amazon.com/images/I/81r2ziuLgzL._SL1500_.jpg",
+    "rating": {
+      "stars": 4.5,
+      "count": 4683
+    }
   },
   {
     "name": "Luna",
-    "url": "https://shop.clifbar.com/collections/luna?ds_rl=1297085&msclkid=0b056b1654ef119e9ed709fa422a0db1&gclsrc=ds",
+    "url": "https://www.amazon.com/LUNA-BAR-Gluten-Variety-Flavors/dp/B07D83FVYH",
     "data": {
       "unit_price": 1.93,
       "calories": 200,
-      "protein": 8.0,
-      "sugar": 10.0,
-      "net_carbs": 25.0
+      "protein": 8,
+      "sugar": 10,
+      "net_carbs": 25
     },
     "ranks": {
       "price_per_100cal": 28,
@@ -2271,17 +2794,22 @@
       "sugar_cals": 70,
       "carbs_cals": 91
     },
-    "sweetener": "Brown Rice Syrup"
+    "sweetener": "Brown Rice Syrup, Cane Syrup",
+    "image": "https://m.media-amazon.com/images/I/81QZHujlm3L._SL1500_.jpg",
+    "rating": {
+      "stars": 4.6,
+      "count": 3953
+    }
   },
   {
     "name": "Thunderbird",
-    "url": "https://www.thunderbirdbar.com/collections/all-da-goods",
+    "url": "https://www.thunderbirdbar.com/collections/bars/products/chocolate-almond-butter-sea-salt-12",
     "data": {
       "unit_price": 2.5,
       "calories": 220,
-      "protein": 6.0,
-      "sugar": 14.0,
-      "net_carbs": 16.0
+      "protein": 6,
+      "sugar": 14,
+      "net_carbs": 16
     },
     "ranks": {
       "price_per_100cal": 49,
@@ -2290,11 +2818,16 @@
       "sugar_cals": 88,
       "carbs_cals": 45
     },
-    "sweetener": "Dates"
+    "sweetener": "Dates",
+    "image": "https://www.thunderbirdbar.com/cdn/shop/files/ThundbirdBar-MainImage-ChocolateAlmondButterSeaSalt.jpg?v=1704492012&width=800",
+    "rating": {
+      "stars": 4,
+      "count": 167
+    }
   },
   {
     "name": "Pulsin High Fibre (UK)",
-    "url": "https://www.pulsin.co.uk/product/double-choc-fudge-brownie/",
+    "url": "https://www.pulsin.co.uk/products/pulsin-peanut-choc-chip-brownie-18x35g",
     "data": {
       "unit_price": 1.17,
       "calories": 148,
@@ -2309,17 +2842,22 @@
       "sugar_cals": 95,
       "carbs_cals": 47
     },
-    "sweetener": "Coconut Blossom Sugar"
+    "sweetener": "Coconut Blossom Sugar",
+    "image": "https://www.pulsin.co.uk/cdn/shop/files/Pulsin-Peanut-Choc-Chip-Brownie-18x35g.png?v=1760819124&width=1946",
+    "rating": {
+      "stars": 3.9,
+      "count": 48
+    }
   },
   {
     "name": "Larabar",
-    "url": "https://www.larabar.com/shop",
+    "url": "https://www.amazon.com/Larabar-Gluten-Snack-Variety-1-7oz/dp/B01ASZ0ILC",
     "data": {
       "unit_price": 1.04,
       "calories": 210,
-      "protein": 5.0,
-      "sugar": 16.0,
-      "net_carbs": 19.0
+      "protein": 5,
+      "sugar": 16,
+      "net_carbs": 19
     },
     "ranks": {
       "price_per_100cal": 1,
@@ -2328,17 +2866,22 @@
       "sugar_cals": 92,
       "carbs_cals": 65
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://s3.amazonaws.com/jo.www.bucket/larabar/nodes/images/357/default/00021908509242_C1C1_s105.jpg?1776113223",
+    "rating": {
+      "stars": 4.4,
+      "count": 4061
+    }
   },
   {
     "name": "Go Macro",
-    "url": "https://www.gomacro.com/shop/",
+    "url": "https://www.amazon.com/GoMacro-MacroBar-Organic-Protein-Variety/dp/B07V9PM8HJ",
     "data": {
       "unit_price": 2.91,
       "calories": 270,
-      "protein": 10.0,
-      "sugar": 13.0,
-      "net_carbs": 35.0
+      "protein": 10,
+      "sugar": 13,
+      "net_carbs": 35
     },
     "ranks": {
       "price_per_100cal": 39,
@@ -2347,17 +2890,22 @@
       "sugar_cals": 67,
       "carbs_cals": 94
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://m.media-amazon.com/images/I/81TnXMciiaL._SL1500_.jpg",
+    "rating": {
+      "stars": 4.7,
+      "count": 502
+    }
   },
   {
     "name": "Health Warrior Chia",
-    "url": "https://www.healthwarrior.com/collections/chia-bars",
+    "url": "https://www.amazon.com/HEALTH-WARRIOR-Chocolate-Gluten-Vegan/dp/B01CLJ09E4",
     "data": {
       "unit_price": 1.58,
       "calories": 100,
-      "protein": 3.0,
-      "sugar": 3.0,
-      "net_carbs": 12.0
+      "protein": 3,
+      "sugar": 3,
+      "net_carbs": 12
     },
     "ranks": {
       "price_per_100cal": 88,
@@ -2366,17 +2914,22 @@
       "sugar_cals": 45,
       "carbs_cals": 88
     },
-    "sweetener": "Brown Rice Syrup"
+    "sweetener": "Brown Rice Syrup, Apple Juice Concentrate, Strawberry Powder",
+    "image": "https://m.media-amazon.com/images/I/61lJAbRmMdL._SL1000_.jpg",
+    "rating": {
+      "stars": 4.3,
+      "count": 1791
+    }
   },
   {
     "name": "Belli Welli",
-    "url": "https://belliwelli.com/collections/shop",
+    "url": "https://www.amazon.com/Belliwelli-Gut-Friendly-Gluten-Free-Dairy-Free-Low-FODMAP/dp/B0948M6GLZ",
     "data": {
       "unit_price": 3.38,
       "calories": 180,
-      "protein": 4.0,
-      "sugar": 8.0,
-      "net_carbs": 18.0
+      "protein": 4,
+      "sugar": 8,
+      "net_carbs": 18
     },
     "ranks": {
       "price_per_100cal": 95,
@@ -2385,17 +2938,22 @@
       "sugar_cals": 58,
       "carbs_cals": 72
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://m.media-amazon.com/images/I/81bdvOyP8ML._SL1500_.jpg",
+    "rating": {
+      "stars": 4,
+      "count": 2299
+    }
   },
   {
     "name": "Whoa! Dough",
-    "url": "https://www.whoadough.com/pages/dough",
+    "url": "https://www.whoadough.com/products/whoa-dough-edible-cookie-dough-bars-plant-based-gluten-free-vegan-non-gmo-healthy-alternative-real-ingredients-healthy-snacks-for-kids-and-adults-10-bars-chocolate-chip",
     "data": {
       "unit_price": 1.67,
       "calories": 170,
-      "protein": 4.0,
-      "sugar": 10.0,
-      "net_carbs": 29.0
+      "protein": 4,
+      "sugar": 10,
+      "net_carbs": 29
     },
     "ranks": {
       "price_per_100cal": 29,
@@ -2404,17 +2962,22 @@
       "sugar_cals": 79,
       "carbs_cals": 96
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://www.whoadough.com/cdn/shop/files/CCCDDec2023_2_815e6db5-c4fb-467d-a937-93d85b73e247.png?v=1745858687&width=1500",
+    "rating": {
+      "stars": 3.1,
+      "count": 24
+    }
   },
   {
     "name": "UCAN",
-    "url": "https://www.amazon.com/UCAN-Bars-Friendly-Non-GMO-Chocolate/dp/B086N3LPY1/ref=sr_1_36?crid=121SJN5KOBVHU&keywords=vegan%2Bprotein%2Bbar&qid=1659651928&s=grocery&sprefix=vegan%2Bprotein%2Bba%2Cgrocery%2C109&sr=1-36&th=1",
+    "url": "https://www.amazon.com/UCAN-Bars-Friendly-Non-GMO-Chocolate/dp/B086N3LPY1/",
     "data": {
       "unit_price": 2.91,
       "calories": 160,
-      "protein": 2.0,
-      "sugar": 6.0,
-      "net_carbs": 19.0
+      "protein": 2,
+      "sugar": 6,
+      "net_carbs": 19
     },
     "ranks": {
       "price_per_100cal": 94,
@@ -2423,17 +2986,22 @@
       "sugar_cals": 50,
       "carbs_cals": 87
     },
-    "sweetener": ""
+    "sweetener": "",
+    "image": "https://m.media-amazon.com/images/I/51HQ2x4bwnL._SL1080_.jpg",
+    "rating": {
+      "stars": 4.4,
+      "count": 190
+    }
   },
   {
     "name": "NuGo Fiber d'Lish",
-    "url": "https://www.nugonutrition.com/collections/fiber",
+    "url": "https://www.amazon.com/Fiber-dLish-Cinnamon-Raisin-Nutrition/dp/B002E36E2O",
     "data": {
       "unit_price": 1.75,
       "calories": 150,
-      "protein": 3.0,
-      "sugar": 10.0,
-      "net_carbs": 19.0
+      "protein": 3,
+      "sugar": 10,
+      "net_carbs": 19
     },
     "ranks": {
       "price_per_100cal": 56,
@@ -2442,7 +3010,12 @@
       "sugar_cals": 91,
       "carbs_cals": 93
     },
-    "sweetener": "Fruit Juices"
+    "sweetener": "Fruit Juices, Raisins, Plums, Apples",
+    "image": "https://m.media-amazon.com/images/I/813+uB-zWgL._SL1500_.jpg",
+    "rating": {
+      "stars": 4.5,
+      "count": 845
+    }
   }
 ];
 
@@ -2472,17 +3045,9 @@
             }
         }
 
-        const savedImage = localStorage.getItem('headerImage');
-        if (savedImage) {
-            const placeholder = document.getElementById('headerImage');
-            placeholder.innerHTML = `<img src="${savedImage}" class="header-image" alt="Header">`;
-            placeholder.onclick = openAdminPanel;
-        }
-
         const sliders = {
             priceCal: document.getElementById('slider-price-cal'),
             protein: document.getElementById('slider-protein'),
-            priceProtein: document.getElementById('slider-price-protein'),
             sugar: document.getElementById('slider-sugar'),
             carbs: document.getElementById('slider-carbs')
         };
@@ -2490,7 +3055,6 @@
         const values = {
             priceCal: document.getElementById('value-price-cal'),
             protein: document.getElementById('value-protein'),
-            priceProtein: document.getElementById('value-price-protein'),
             sugar: document.getElementById('value-sugar'),
             carbs: document.getElementById('value-carbs')
         };
@@ -2499,22 +3063,73 @@
             valueDisplay.textContent = slider.value;
         }
 
+        // A bar is UK if its name is tagged "(UK...)" or it declared region UK; else US.
+        function barRegion(bar) {
+            if (bar._forceRegion === 'US' || bar._forceRegion === 'UK') return bar._forceRegion;
+            return /\(uk\b/i.test(bar.name) ? 'UK' : 'US';
+        }
+
+        // Escape untrusted text (community submissions) before injecting into HTML.
+        function esc(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        // Only allow http(s) links; reject javascript:, data:, etc.
+        function safeUrl(u) {
+            return (typeof u === 'string' && /^https?:\/\//i.test(u.trim())) ? u.trim() : '';
+        }
+
+        function getVisibleBars() {
+            const showUS = document.getElementById('filter-us').checked;
+            const showUK = document.getElementById('filter-uk').checked;
+            return barsData.filter(bar => {
+                const r = barRegion(bar);
+                return (r === 'US' && showUS) || (r === 'UK' && showUK);
+            });
+        }
+
+        // Compute each bar's per-criterion rank (1 = best) from its raw stats,
+        // so any bar — including community submissions — ranks automatically.
+        function computeDynamicRanks(bars) {
+            const metric = b => {
+                const d = b.data || {};
+                const cal = d.calories || 1;
+                return {
+                    ppc: (d.unit_price || 0) / (cal / 100),        // price per 100 cal (lower better)
+                    prot: ((d.protein || 0) * 4) / cal,            // % protein cals (higher better)
+                    sug: ((d.sugar || 0) * 4) / cal,               // % sugar cals (lower better)
+                    carb: ((d.net_carbs || 0) * 4) / cal           // % carb cals (lower better)
+                };
+            };
+            const m = bars.map(metric);
+            const rankBy = (key, asc) => {
+                const order = bars.map((_, i) => i).sort((x, y) => asc ? m[x][key] - m[y][key] : m[y][key] - m[x][key]);
+                const out = [];
+                order.forEach((origIdx, pos) => out[origIdx] = pos + 1);
+                return out;
+            };
+            const rp = rankBy('ppc', true), rpr = rankBy('prot', false), rs = rankBy('sug', true), rc = rankBy('carb', true);
+            return bars.map((b, i) => ({
+                ...b,
+                _ranks: { price_per_100cal: rp[i], protein_cals: rpr[i], sugar_cals: rs[i], carbs_cals: rc[i] }
+            }));
+        }
+
         function calculateAndDisplay() {
             const weights = {
                 priceCal: parseInt(sliders.priceCal.value),
                 protein: parseInt(sliders.protein.value),
-                priceProtein: parseInt(sliders.priceProtein.value),
                 sugar: parseInt(sliders.sugar.value),
                 carbs: parseInt(sliders.carbs.value)
             };
 
-            const scored = barsData.map(bar => {
+            const scored = computeDynamicRanks(getVisibleBars()).map(bar => {
                 const score =
-                    (bar.ranks.price_per_100cal * weights.priceCal) +
-                    (bar.ranks.protein_cals * weights.protein) +
-                    (bar.ranks.price_per_protein * weights.priceProtein) +
-                    (bar.ranks.sugar_cals * weights.sugar) +
-                    (bar.ranks.carbs_cals * weights.carbs);
+                    (bar._ranks.price_per_100cal * weights.priceCal) +
+                    (bar._ranks.protein_cals * weights.protein) +
+                    (bar._ranks.sugar_cals * weights.sugar) +
+                    (bar._ranks.carbs_cals * weights.carbs);
 
                 return {
                     ...bar,
@@ -2526,26 +3141,24 @@
 
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = scored.slice(0, 10).map((bar, index) => {
-                const barId = `bar-${index}`;
-                const barName = (bar.url && bar.url.trim()) ? `<a href="${bar.url}" target="_blank" style="color: #2d5016; text-decoration: underline;">${bar.name}</a>` : bar.name;
+                const u = safeUrl(bar.url);
+                const barName = u ? `<a href="${esc(u)}" target="_blank" rel="noopener nofollow" style="color: #2d5016; text-decoration: underline;">${esc(bar.name)}</a>` : esc(bar.name);
+                const imageHtml = bar.image ? `<img src="${esc(bar.image)}" class="bar-image" alt="${esc(bar.name)}" loading="lazy">` : '';
 
                 return `
                 <div class="bar-item">
                     <div class="bar-rank">${index + 1}</div>
+                    ${imageHtml}
                     <div class="bar-info">
                         <div class="bar-name">${barName}</div>
-                        <div class="bar-sweetener">Sweetened with: ${bar.sweetener}</div>
-                        <button class="expand-button" onclick="toggleDetails('${barId}')">
-                            Show details ▼
-                        </button>
-                        <div id="${barId}" class="bar-details" style="display: none;">
-                            <div class="bar-details-grid">
-                                <div class="bar-detail-item"><span>Unit Price:</span><span>$${(bar.data?.unit_price || 0).toFixed(2)}</span></div>
-                                <div class="bar-detail-item"><span>Calories:</span><span>${bar.data?.calories || 'N/A'}</span></div>
-                                <div class="bar-detail-item"><span>Protein:</span><span>${bar.data?.protein || 0}g</span></div>
-                                <div class="bar-detail-item"><span>Sugar:</span><span>${bar.data?.sugar || 0}g</span></div>
-                                <div class="bar-detail-item"><span>Net Carbs:</span><span>${bar.data?.net_carbs || 0}g</span></div>
-                            </div>
+                        <div class="bar-rating">${renderRating(bar.rating)}</div>
+                        <div class="bar-details-grid">
+                            <div class="bar-detail-item"><span>Unit Price:</span><span>$${(bar.data?.unit_price || 0).toFixed(2)}</span></div>
+                            <div class="bar-detail-item"><span>Calories:</span><span>${bar.data?.calories || 'N/A'}</span></div>
+                            <div class="bar-detail-item"><span>Protein:</span><span>${bar.data?.protein || 0}g</span></div>
+                            <div class="bar-detail-item"><span>Sugar:</span><span>${bar.data?.sugar || 0}g</span></div>
+                            <div class="bar-detail-item"><span>Net Carbs:</span><span>${bar.data?.net_carbs || 0}g</span></div>
+                            <div class="bar-detail-item"><span>Sweetener:</span><span>${bar.sweetener ? esc(bar.sweetener) : 'N/A'}</span></div>
                         </div>
                     </div>
                 </div>
@@ -2555,16 +3168,15 @@
             displayAllBars(scored);
         }
 
-        function toggleDetails(id) {
-            const details = document.getElementById(id);
-            const button = details.previousElementSibling;
-            if (details.style.display === 'none') {
-                details.style.display = 'block';
-                button.textContent = 'Hide details ▲';
-            } else {
-                details.style.display = 'none';
-                button.textContent = 'Show details ▼';
+        function renderRating(rating) {
+            if (!rating || typeof rating.stars !== 'number') {
+                return '<span class="no-rating">No Amazon rating</span>';
             }
+            const full = Math.floor(rating.stars);
+            const half = (rating.stars - full) >= 0.5;
+            const stars = '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(5 - full - (half ? 1 : 0));
+            const count = rating.count ? ` (${rating.count.toLocaleString()})` : '';
+            return `<span class="stars">${stars}</span> ${rating.stars.toFixed(1)}${count}`;
         }
 
         function displayAllBars(scoredBars, sortColumn = null, sortAscending = null) {
@@ -2586,8 +3198,8 @@
                 rankMap[bar.name] = index + 1;
             });
 
-            // Sort the bars based on current sort state
-            const sorted = [...barsData].sort((a, b) => {
+            // Sort the (region-filtered) bars based on current sort state
+            const sorted = [...scoredBars].sort((a, b) => {
                 let valueA, valueB;
 
                 switch(sortState.column) {
@@ -2626,12 +3238,13 @@
                 return sortState.ascending ? valueA - valueB : valueB - valueA;
             });
 
-            // Create sort arrow indicator
+            // Every sortable column shows an icon: neutral (⇅) when inactive,
+            // directional (▲/▼) when it's the active sort column.
             const getSortArrow = (column) => {
                 if (sortState.column === column) {
                     return `<span class="sort-arrow">${sortState.ascending ? '▲' : '▼'}</span>`;
                 }
-                return '';
+                return `<span class="sort-icon">⇅</span>`;
             };
 
             allBarsDiv.innerHTML = `
@@ -2663,7 +3276,8 @@
                     </thead>
                     <tbody>
                         ${sorted.map(bar => {
-                            const barLink = (bar.url && bar.url.trim()) ? `<a href="${bar.url}" target="_blank" style="color: #2d5016; text-decoration: underline;">${bar.name}</a>` : bar.name;
+                            const bu = safeUrl(bar.url);
+                            const barLink = bu ? `<a href="${esc(bu)}" target="_blank" rel="noopener nofollow" style="color: #2d5016; text-decoration: underline;">${esc(bar.name)}</a>` : esc(bar.name);
                             const overallRank = rankMap[bar.name] || '-';
                             return `
                             <tr>
@@ -2682,6 +3296,7 @@
 
             // Add click handlers to table headers
             document.querySelectorAll('.all-bars-table th[data-sort]').forEach(th => {
+                th.title = 'Click to sort';
                 th.addEventListener('click', () => {
                     displayAllBars(scoredBars, th.dataset.sort);
                 });
@@ -2695,28 +3310,17 @@
             });
         });
 
+        ['filter-us', 'filter-uk'].forEach(id => {
+            document.getElementById(id).addEventListener('change', calculateAndDisplay);
+        });
+
         function openAdminPanel() {
             document.getElementById('adminModal').classList.add('active');
             document.getElementById('barsDataInput').value = JSON.stringify(barsData, null, 2);
-            const savedImage = localStorage.getItem('headerImage');
-            if (savedImage) {
-                document.getElementById('imageUrl').value = savedImage;
-            }
         }
 
         function closeAdminPanel() {
             document.getElementById('adminModal').classList.remove('active');
-        }
-
-        function saveHeaderImage() {
-            const url = document.getElementById('imageUrl').value.trim();
-            if (url) {
-                localStorage.setItem('headerImage', url);
-                const placeholder = document.getElementById('headerImage');
-                placeholder.innerHTML = `<img src="${url}" class="header-image" alt="Header">`;
-                placeholder.onclick = openAdminPanel;
-                alert('Header image updated! Refresh the page to see changes.');
-            }
         }
 
         function saveBarsData() {
@@ -2751,6 +3355,144 @@
         }
 
         calculateAndDisplay();
+
+        // ================= Community submissions (Supabase) =================
+        let sbClient = null;
+        if (CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY && window.supabase) {
+            sbClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+        }
+
+        function communityRowToBar(row) {
+            return {
+                name: row.name,
+                url: row.url || '',
+                data: {
+                    unit_price: Number(row.unit_price),
+                    calories: Number(row.calories),
+                    protein: Number(row.protein),
+                    sugar: Number(row.sugar),
+                    net_carbs: Number(row.net_carbs)
+                },
+                sweetener: row.sweetener || '',
+                rating: null,
+                community: true,
+                _forceRegion: row.region === 'UK' ? 'UK' : 'US'
+            };
+        }
+
+        async function loadCommunityBars() {
+            if (!sbClient) return;
+            try {
+                const { data, error } = await sbClient.from('bars').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                const seen = new Set(barsData.map(b => b.name.toLowerCase()));
+                (data || []).forEach(row => {
+                    if (row && row.name && !seen.has(row.name.toLowerCase())) {
+                        barsData.push(communityRowToBar(row));
+                        seen.add(row.name.toLowerCase());
+                    }
+                });
+                calculateAndDisplay();
+            } catch (e) {
+                console.warn('Could not load community bars:', e.message);
+            }
+        }
+        loadCommunityBars();
+
+        document.getElementById('submitBarForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const status = document.getElementById('sb-status');
+            const val = id => document.getElementById(id).value.trim();
+            const name = val('sb-name');
+            const nums = {
+                unit_price: parseFloat(val('sb-price')),
+                calories: parseFloat(val('sb-cal')),
+                protein: parseFloat(val('sb-protein')),
+                sugar: parseFloat(val('sb-sugar')),
+                net_carbs: parseFloat(val('sb-carbs'))
+            };
+            if (!name || Object.values(nums).some(v => isNaN(v)) || nums.calories <= 0) {
+                status.className = 'form-status err';
+                status.textContent = 'Fill in the name and all numbers (calories must be > 0).';
+                return;
+            }
+            if (barsData.some(b => b.name.toLowerCase() === name.toLowerCase())) {
+                status.className = 'form-status err';
+                status.textContent = 'A bar with that name already exists.';
+                return;
+            }
+            const row = {
+                name: name,
+                region: val('sb-region') === 'UK' ? 'UK' : 'US',
+                unit_price: nums.unit_price, calories: nums.calories, protein: nums.protein,
+                sugar: nums.sugar, net_carbs: nums.net_carbs,
+                sweetener: val('sb-sweetener'),
+                url: safeUrl(val('sb-url'))
+            };
+            status.className = 'form-status';
+            status.textContent = 'Submitting…';
+            if (sbClient) {
+                const { error } = await sbClient.from('bars').insert(row);
+                if (error) {
+                    status.className = 'form-status err';
+                    status.textContent = 'Error: ' + error.message;
+                    return;
+                }
+            }
+            barsData.push(communityRowToBar(row));
+            calculateAndDisplay();
+            e.target.reset();
+            status.className = 'form-status ok';
+            status.textContent = sbClient
+                ? 'Added — it is now in the rankings!'
+                : 'Added for this session (set up the backend to save it globally).';
+        });
+
+        // ================= Feedback form (Web3Forms → email) =================
+        document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const status = document.getElementById('fb-status');
+            const message = document.getElementById('fb-message').value.trim();
+            if (!message) {
+                status.className = 'form-status err';
+                status.textContent = 'Please enter a message.';
+                return;
+            }
+            if (!CONFIG.WEB3FORMS_KEY) {
+                status.className = 'form-status err';
+                status.textContent = 'Feedback isn’t configured yet (add your Web3Forms key).';
+                return;
+            }
+            const type = document.getElementById('fb-type').value;
+            const email = document.getElementById('fb-email').value.trim();
+            status.className = 'form-status';
+            status.textContent = 'Sending…';
+            try {
+                const res = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    body: JSON.stringify({
+                        access_key: CONFIG.WEB3FORMS_KEY,
+                        subject: 'soyboysrus.com feedback: ' + type,
+                        from_name: 'soyboysrus.com',
+                        email: email || 'anonymous@soyboysrus.com',
+                        feedback_type: type,
+                        message: message
+                    })
+                });
+                const json = await res.json();
+                if (json.success) {
+                    status.className = 'form-status ok';
+                    status.textContent = 'Thanks — your feedback was sent!';
+                    e.target.reset();
+                } else {
+                    throw new Error(json.message || 'submission failed');
+                }
+            } catch (err) {
+                status.className = 'form-status err';
+                status.textContent = 'Could not send: ' + err.message;
+            }
+        });
     </script>
 </body>
 </html>
