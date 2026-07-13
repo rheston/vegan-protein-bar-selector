@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vegan Protein Bar Selector</title>
+    <title>SoyBoysRUs — Vegan Protein Bar Selector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bungee&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -660,14 +663,298 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* ===================== SoyBoysRUs brand theme ===================== */
+        :root {
+            --acid: #B4FF39;
+            --acid-dark: #7ac400;
+            --pink: #FF2D95;
+            --ink: #0a0a0a;
+            --ink-2: #141414;
+        }
+
+        body {
+            background: #0a0a0a !important;
+            color: #f2f2f2;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Display type for every headline */
+        h1, h2, h3,
+        .preferences-card h2, .results-card h2, .all-bars-section h2, .contribute-card h2 {
+            font-family: 'Anton', 'Arial Narrow', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.02;
+        }
+
+        /* White info-cards: keep legible, dark ink headings with acid underline */
+        .preferences-card, .results-card, .all-bars-section, .contribute-card, .region-filter {
+            border: 2px solid #000;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.6);
+        }
+        .preferences-card h2, .results-card h2, .all-bars-section h2, .contribute-card h2 {
+            color: #0a0a0a;
+            font-size: 2rem;
+            display: inline-block;
+            border-bottom: 6px solid var(--acid);
+            padding-bottom: 2px;
+        }
+
+        /* Buttons: acid on black, hard supplement-label look */
+        .button, .admin-button {
+            background: var(--acid) !important;
+            color: #0a0a0a !important;
+            font-family: 'Anton', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid #000 !important;
+            border-radius: 6px !important;
+            box-shadow: 4px 4px 0 #000;
+        }
+        .button:hover, .admin-button:hover {
+            background: #fff !important;
+            transform: translate(-1px,-1px);
+        }
+        .button-secondary { background: var(--pink) !important; color: #fff !important; }
+        .button-danger { background: #ff3b3b !important; color: #fff !important; }
+        .contribute-form input:focus, .contribute-form select:focus, .contribute-form textarea:focus { border-color: var(--acid-dark); }
+        input[type="range"]::-webkit-slider-thumb { background: var(--acid-dark); }
+        input[type="range"]::-moz-range-thumb { background: var(--acid-dark); }
+
+        .bar-rank { color: var(--acid-dark); }
+
+        /* ---------- SIMPLE TITLE HEADER ---------- */
+        .site-header {
+            text-align: center;
+            padding: 26px 20px 30px;
+        }
+        .chad-img {
+            max-width: 260px;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px;
+            background: transparent;
+            border-radius: 14px;
+        }
+        .chad-fallback {
+            display: none;
+            width: 210px;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto 8px;
+        }
+        .brand-title {
+            font-family: 'Bungee', 'Anton', sans-serif;
+            font-size: clamp(2.6rem, 8vw, 5rem);
+            color: #ffffff;
+            line-height: 1.02;
+            letter-spacing: 1px;
+            text-transform: none;
+            text-shadow: 5px 5px 0 var(--pink);
+        }
+        .brand-title .t-green { color: var(--acid-dark); }
+        .brand-title .t-yellow { color: var(--acid); }
+        .brand-subtitle {
+            font-family: 'Anton', 'Arial Narrow', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #d6d6d6;
+            font-size: 1.35rem;
+            margin-top: 14px;
+        }
+
+        .credits {
+            text-align: center;
+            color: #808080;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            padding: 40px 20px 24px;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .credits p { margin: 4px 0; }
+        .all-bars-table th { background: #0a0a0a; }
+        .all-bars-table th:hover { background: #222; }
+        .all-bars-table th.sorted { background: var(--acid-dark); color: #0a0a0a; }
+
+        /* Keep Top-10 detail rows + table text high-contrast (near-black) */
+        .bar-details, .bar-details-grid, .bar-detail-item, .bar-detail-item span { color: #111 !important; }
+        .all-bars-table td, .all-bars-table td a { color: #111; }
+
+        /* ---------- HERO ---------- */
+        .hero {
+            background: radial-gradient(circle at 30% 20%, #1c1c1c 0%, #0a0a0a 70%);
+            border: 3px solid var(--acid);
+            border-radius: 16px;
+            padding: 44px 36px;
+            margin-bottom: 22px;
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 24px;
+            align-items: center;
+        }
+        .hero-eyebrow {
+            color: var(--acid);
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        .hero h1 {
+            color: #fff;
+            font-size: clamp(2.4rem, 6vw, 4.3rem);
+            margin: 0 0 14px;
+            text-shadow: 3px 3px 0 var(--pink);
+        }
+        .hero h1 .acid { color: var(--acid); }
+        .hero-sub {
+            color: #cfcfcf;
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            max-width: 30ch;
+        }
+        .cta {
+            display: inline-block;
+            background: var(--acid);
+            color: #0a0a0a;
+            font-family: 'Anton', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 1.25rem;
+            padding: 16px 34px;
+            border-radius: 8px;
+            border: 3px solid #000;
+            box-shadow: 6px 6px 0 var(--pink);
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.1s;
+        }
+        .cta:hover { transform: translate(-2px,-2px); box-shadow: 8px 8px 0 var(--pink); }
+        .hero-art { display: flex; justify-content: center; align-items: center; }
+        .hero-art svg { width: 100%; max-width: 300px; height: auto; }
+
+        /* ---------- STATS BAR ---------- */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            background: #000;
+            border: 3px solid #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 22px;
+        }
+        .stat {
+            background: var(--acid);
+            color: #0a0a0a;
+            text-align: center;
+            padding: 18px 10px;
+        }
+        .stat:nth-child(even) { background: #fff; }
+        .stat .num { font-family: 'Anton', sans-serif; font-size: 2.1rem; line-height: 1; }
+        .stat .label { font-weight: 800; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 1px; margin-top: 6px; }
+
+        /* ---------- BADGES on top bars ---------- */
+        .bar-badge {
+            display: inline-block;
+            background: var(--ink);
+            color: var(--acid);
+            font-family: 'Anton', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.7rem;
+            padding: 3px 9px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+
+        /* ---------- MASCOT ORIGIN SECTION ---------- */
+        .mascot-section {
+            background: var(--ink-2);
+            border: 3px solid var(--pink);
+            border-radius: 16px;
+            padding: 36px;
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 28px;
+            align-items: center;
+        }
+        .mascot-section svg { width: 100%; max-width: 220px; height: auto; }
+        .mascot-section h2 { color: var(--acid) !important; font-size: 2.2rem; border: none !important; }
+        .mascot-section p { color: #d8d8d8; line-height: 1.6; margin-top: 12px; font-weight: 500; }
+
+        /* ---------- FOOTER ---------- */
+        .site-footer {
+            text-align: center;
+            padding: 48px 20px 30px;
+            margin-top: 20px;
+        }
+        .site-footer h2 { color: #fff; font-size: 2.4rem; }
+        .site-footer h2 .acid { color: var(--acid); }
+        .site-footer .cta { margin: 18px 0 24px; }
+        .footer-links a {
+            color: var(--acid);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            margin: 0 12px;
+            font-size: 0.9rem;
+        }
+        .footer-links a:hover { color: #fff; }
+        .footer-fine { color: #666; font-size: 0.8rem; margin-top: 22px; }
+
+        @media (max-width: 700px) {
+            .hero, .mascot-section { grid-template-columns: 1fr; text-align: center; }
+            .hero-sub { max-width: none; }
+            .hero-art { order: -1; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+    <!-- SoyBoysRUs mascot: original placeholder art — swap the paths for final illustration -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="soyboy-mascot" viewBox="0 0 240 300">
+            <g stroke="#0a0a0a" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+                <rect x="104" y="168" width="32" height="26" fill="#B4FF39"/>
+                <path d="M120 176 C58 180 26 216 30 270 L210 270 C214 216 182 180 120 176 Z" fill="#B4FF39"/>
+                <path d="M120 190 L120 250" fill="none" stroke-width="5"/>
+                <path d="M120 214 Q98 222 84 214" fill="none" stroke-width="4"/>
+                <path d="M120 214 Q142 222 156 214" fill="none" stroke-width="4"/>
+                <path d="M108 250 L132 250" fill="none" stroke-width="3"/>
+                <circle cx="48" cy="224" r="24" fill="#B4FF39"/>
+                <g transform="rotate(-14 176 240)">
+                    <rect x="150" y="228" width="52" height="22" rx="4" fill="#0a0a0a"/>
+                    <rect x="156" y="233" width="18" height="12" fill="#FF2D95" stroke="none"/>
+                </g>
+                <path d="M78 96 L162 96 Q170 96 170 112 L170 150 Q170 178 120 192 Q70 178 70 150 L70 112 Q70 96 78 96 Z" fill="#B4FF39"/>
+                <path d="M72 102 Q74 64 120 60 Q166 64 168 102 Q150 86 120 86 Q90 86 72 102 Z" fill="#0a0a0a"/>
+                <path d="M84 118 L112 122" fill="none" stroke-width="9"/>
+                <path d="M156 118 L128 122" fill="none" stroke-width="9"/>
+                <circle cx="101" cy="132" r="5" fill="#0a0a0a" stroke="none"/>
+                <circle cx="139" cy="132" r="5" fill="#0a0a0a" stroke="none"/>
+                <path d="M120 134 L120 150 L113 152" fill="none" stroke-width="4"/>
+                <path d="M104 166 L136 166" fill="none" stroke-width="5"/>
+                <path d="M88 156 Q120 184 152 156" fill="none" stroke-width="3" opacity="0.45"/>
+            </g>
+        </symbol>
+    </svg>
     <div class="container">
-        <h1>💪 VEGAN PROTEIN BAR SELECTOR 💪</h1>
+        <header class="site-header">
+            <img src="chad_meme.jpg" alt="SoyBoysRUs Chad" class="chad-img"
+                 onerror="this.style.display='none'; var f=document.getElementById('chad-fallback'); if(f){f.style.display='block';}">
+            <svg id="chad-fallback" class="chad-fallback" viewBox="0 0 240 300" role="img" aria-label="Chad mascot"><use href="#soyboy-mascot"/></svg>
+            <h1 class="brand-title"><span class="t-green">Plant</span> <span class="t-yellow">Powered</span></h1>
+            <p class="brand-subtitle">Find the vegan protein bar for you</p>
+        </header>
 
-            <div class="preferences-card">
+            <div class="preferences-card" id="quiz">
             <h2>What's important to you in a protein bar?</h2>
 
             <div class="slider-scale scale-header"><span>Not important</span><span>Very important</span></div>
@@ -762,6 +1049,12 @@
                 <span id="fb-status" class="form-status"></span>
             </form>
         </div>
+
+        <footer class="credits">
+            <p>Bar stats compiled from public nutrition data. Star ratings from Amazon.com &amp; Amazon.co.uk.</p>
+            <p>Mascot: “GigaChad” image by Krista Sudmalis (Sleek’N’Tears), used in parody. SoyBoysRUs is a parody brand — not affiliated with any listed product.</p>
+            <p>Built by Roxanne Heston.</p>
+        </footer>
     </div>
 
     <button class="admin-button" onclick="openAdminPanel()">⚙️ Admin Panel</button>
