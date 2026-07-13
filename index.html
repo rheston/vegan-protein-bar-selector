@@ -6,7 +6,7 @@
     <title>SoyBoysRUs — Vegan Protein Bar Selector</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bungee&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bungee&family=Bungee+Shade&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -665,9 +665,9 @@
         }
         /* ===================== SoyBoysRUs brand theme ===================== */
         :root {
-            --acid: #B4FF39;
-            --acid-dark: #7ac400;
-            --pink: #FF2D95;
+            --acid: #DFD63A;        /* Chad's hat yellow */
+            --acid-dark: #9A8F12;   /* darker gold for on-white elements */
+            --pink: #E23C66;        /* Chad's shirt red */
             --ink: #0a0a0a;
             --ink-2: #141414;
         }
@@ -722,6 +722,9 @@
         input[type="range"]::-moz-range-thumb { background: var(--acid-dark); }
 
         .bar-rank { color: var(--acid-dark); }
+        .slider-dimension { color: #0a0a0a; }
+        .slider-value { color: var(--acid-dark); }
+        .form-status.ok { color: var(--acid-dark); }
 
         /* ---------- SIMPLE TITLE HEADER ---------- */
         .site-header {
@@ -753,8 +756,8 @@
             text-transform: none;
             text-shadow: 5px 5px 0 var(--pink);
         }
-        .brand-title .t-green { color: var(--acid-dark); }
-        .brand-title .t-yellow { color: var(--acid); }
+        .brand-title .t-green { color: var(--acid); }
+        .brand-title .t-yellow { color: var(--acid); font-family: 'Bungee Shade', 'Bungee', sans-serif; text-shadow: none; }
         .brand-subtitle {
             font-family: 'Anton', 'Arial Narrow', sans-serif;
             text-transform: uppercase;
@@ -3435,7 +3438,7 @@
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = scored.slice(0, 10).map((bar, index) => {
                 const u = safeUrl(bar.url);
-                const barName = u ? `<a href="${esc(u)}" target="_blank" rel="noopener nofollow" style="color: #2d5016; text-decoration: underline;">${esc(bar.name)}</a>` : esc(bar.name);
+                const barName = u ? `<a href="${esc(u)}" target="_blank" rel="noopener nofollow" style="color: #0a0a0a; text-decoration: underline;">${esc(bar.name)}</a>` : esc(bar.name);
                 const imageHtml = bar.image ? `<img src="${esc(bar.image)}" class="bar-image" alt="${esc(bar.name)}" loading="lazy">` : '';
 
                 return `
@@ -3570,7 +3573,7 @@
                     <tbody>
                         ${sorted.map(bar => {
                             const bu = safeUrl(bar.url);
-                            const barLink = bu ? `<a href="${esc(bu)}" target="_blank" rel="noopener nofollow" style="color: #2d5016; text-decoration: underline;">${esc(bar.name)}</a>` : esc(bar.name);
+                            const barLink = bu ? `<a href="${esc(bu)}" target="_blank" rel="noopener nofollow" style="color: #0a0a0a; text-decoration: underline;">${esc(bar.name)}</a>` : esc(bar.name);
                             const overallRank = rankMap[bar.name] || '-';
                             return `
                             <tr>
